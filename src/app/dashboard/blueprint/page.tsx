@@ -108,7 +108,7 @@ export default function BlueprintPage() {
                   <li key={i} className="flex items-start gap-3 group">
                     {task.status === 'done' ? (
                       <CheckCircle2 className="w-4 h-4 text-emerald-500 mt-0.5 shrink-0" />
-                    ) : phase.status === 'in-progress' && i === 2 ? ( // Hardcoding the current active task for visual effect
+                    ) : phase.status === 'in-progress' && i === 2 ? (
                       <Zap className="w-4 h-4 text-primary mt-0.5 shrink-0 animate-pulse" />
                     ) : (
                       <Circle className="w-4 h-4 text-muted-foreground/30 mt-0.5 shrink-0 group-hover:text-white/50 transition-colors" />
