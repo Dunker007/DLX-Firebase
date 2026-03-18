@@ -15,7 +15,10 @@ import {
   PieChart,
   Music,
   Video,
-  LayoutGrid
+  LayoutGrid,
+  Zap,
+  HardDrive,
+  Users
 } from "lucide-react"
 
 import {
@@ -40,34 +43,44 @@ const items = [
     icon: LayoutDashboard,
   },
   {
-    title: "Studios Hub",
+    title: "Studios",
     url: "/studios",
     icon: LayoutGrid,
   },
   {
-    title: "Chat & Agents",
+    title: "Chat",
     url: "/chat",
     icon: MessageSquare,
   },
   {
-    title: "SmartFolio",
-    url: "/smart-folio",
-    icon: PieChart,
-  },
-  {
-    title: "Agent Hub",
+    title: "Agents",
     url: "/agents",
-    icon: Bot,
+    icon: Users,
   },
   {
-    title: "News Feed",
+    title: "Agentflow",
+    url: "/dashboard/agentflow",
+    icon: Zap,
+  },
+  {
+    title: "News",
     url: "/news",
     icon: Newspaper,
+  },
+  {
+    title: "Meeting",
+    url: "/dashboard/meeting",
+    icon: Video,
   },
   {
     title: "Labs",
     url: "/labs",
     icon: FlaskConical,
+  },
+  {
+    title: "Drive",
+    url: "/dashboard/drive",
+    icon: HardDrive,
   },
 ]
 
@@ -79,18 +92,21 @@ export function AppSidebar() {
     <Sidebar collapsible="icon" className="border-r border-white/5">
       <SidebarHeader className="h-16 flex items-center px-4">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center neon-glow">
+          <div className="w-8 h-8 rounded-lg bg-cyan-500 flex items-center justify-center shadow-[0_0_15px_-2px_rgba(6,182,212,0.5)]">
             <Sparkles className="w-5 h-5 text-white" />
           </div>
           {state !== "collapsed" && (
-            <span className="font-headline font-bold text-lg tracking-tight">LuxAI</span>
+            <div className="flex flex-col">
+              <span className="font-headline font-bold text-sm tracking-tight leading-none uppercase">Nexus</span>
+              <span className="text-[8px] font-black text-muted-foreground/60 tracking-widest uppercase">Local Interface</span>
+            </div>
           )}
         </div>
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel className="text-muted-foreground/50 uppercase text-[10px] tracking-widest font-bold px-4 py-2">
-            Main Navigation
+          <SidebarGroupLabel className="text-muted-foreground/30 uppercase text-[9px] tracking-widest font-black px-4 py-2">
+            Systems Management
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
@@ -100,11 +116,11 @@ export function AppSidebar() {
                     asChild
                     isActive={pathname === item.url || (item.url !== '/dashboard' && pathname.startsWith(item.url))}
                     tooltip={item.title}
-                    className="h-11 transition-all duration-200"
+                    className="h-10 transition-all duration-200 hover:bg-white/5 data-[active=true]:bg-cyan-500/10 data-[active=true]:text-cyan-500"
                   >
                     <Link href={item.url} className="flex items-center gap-3">
-                      <item.icon className="w-5 h-5" />
-                      <span className="font-medium">{item.title}</span>
+                      <item.icon className="w-4 h-4" />
+                      <span className="text-xs font-black uppercase tracking-tight">{item.title}</span>
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
@@ -116,23 +132,23 @@ export function AppSidebar() {
       <SidebarFooter className="p-4 border-t border-white/5">
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton asChild tooltip="Settings">
+            <SidebarMenuButton asChild tooltip="Settings" className="hover:bg-white/5">
               <Link href="/settings">
-                <Settings className="w-5 h-5" />
-                <span>Settings</span>
+                <Settings className="w-4 h-4" />
+                <span className="text-xs font-black uppercase tracking-tight">Settings</span>
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
           <SidebarMenuItem>
             <div className="flex items-center gap-3 p-2 mt-2">
-              <Avatar className="w-8 h-8 border border-primary/20">
+              <Avatar className="w-7 h-7 border border-white/5">
                 <AvatarImage src="https://picsum.photos/seed/user/100/100" />
-                <AvatarFallback className="bg-primary/10 text-primary text-xs font-bold">JD</AvatarFallback>
+                <AvatarFallback className="bg-cyan-500/10 text-cyan-500 text-[10px] font-black">JD</AvatarFallback>
               </Avatar>
               {state !== "collapsed" && (
                 <div className="flex flex-col min-w-0">
-                  <span className="text-sm font-semibold truncate">Jane Doe</span>
-                  <span className="text-xs text-muted-foreground truncate">Pro Member</span>
+                  <span className="text-[10px] font-black uppercase tracking-tight truncate">Jane Doe</span>
+                  <span className="text-[8px] font-bold text-muted-foreground/60 uppercase truncate">Pro Access</span>
                 </div>
               )}
             </div>
