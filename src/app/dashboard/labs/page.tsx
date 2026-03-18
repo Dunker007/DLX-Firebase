@@ -1,4 +1,3 @@
-
 "use client"
 
 import * as React from 'react';
@@ -67,7 +66,7 @@ export default function LabsPage() {
               className={`h-8 rounded-full text-[10px] font-black uppercase px-4 ${i === 0 ? "bg-primary" : "border-white/5 bg-white/5"}`}
             >
               {filter}
-            </Badge>
+            </Button>
           ))}
         </div>
         <div className="relative w-64">
