@@ -56,7 +56,7 @@ function ChatContent() {
   const handlePersonaSelect = (name: PersonaName) => {
     setSelectedPersona(name)
     // Update URL without full page reload
-    router.push(`/chat?persona=\${name}`, { scroll: false })
+    router.push("/chat?persona=" + name, { scroll: false })
   }
 
   const messagesQuery = useMemoFirebase(() => {
@@ -146,18 +146,18 @@ function ChatContent() {
               <Card
                 key={p.name}
                 onClick={() => handlePersonaSelect(p.name)}
-                className={\`p-4 cursor-pointer transition-all duration-300 \${
+                className={"p-4 cursor-pointer transition-all duration-300 " + (
                   selectedPersona === p.name 
-                    ? \`\${p.bg} \${p.border} ring-1 ring-current shadow-lg\` 
+                    ? p.bg + " " + p.border + " ring-1 ring-current shadow-lg" 
                     : "bg-[#0a0a0c] border-white/5 hover:bg-white/5"
-                }\`}
+                )}
               >
                 <div className="flex items-center gap-3 mb-3">
-                  <div className={\`w-10 h-10 rounded-xl flex items-center justify-center border \${selectedPersona === p.name ? p.border : 'border-white/5 bg-background'}\`}>
-                    <p.icon className={\`w-5 h-5 \${selectedPersona === p.name ? p.color : 'text-muted-foreground'}\`} />
+                  <div className={"w-10 h-10 rounded-xl flex items-center justify-center border " + (selectedPersona === p.name ? p.border : 'border-white/5 bg-background')}>
+                    <p.icon className={"w-5 h-5 " + (selectedPersona === p.name ? p.color : 'text-muted-foreground')} />
                   </div>
                   <div>
-                    <h3 className={\`font-headline text-lg font-black uppercase tracking-tight leading-none \${selectedPersona === p.name ? p.color : ''}\`}>
+                    <h3 className={"font-headline text-lg font-black uppercase tracking-tight leading-none " + (selectedPersona === p.name ? p.color : '')}>
                       {p.name}
                     </h3>
                     <p className="text-[9px] text-muted-foreground uppercase tracking-widest font-black mt-1">{p.role}</p>
@@ -173,15 +173,15 @@ function ChatContent() {
       <main className="flex-1 flex flex-col bg-[#0a0a0c] rounded-[2rem] border border-white/5 overflow-hidden shadow-2xl relative">
         <header className="p-6 border-b border-white/5 bg-white/[0.02] flex items-center justify-between backdrop-blur-xl absolute top-0 w-full z-10">
           <div className="flex items-center gap-4">
-            <div className={\`w-12 h-12 rounded-2xl border \${activePersonaDetails.border} flex items-center justify-center \${activePersonaDetails.bg}\`}>
-              <activePersonaDetails.icon className={\`w-6 h-6 \${activePersonaDetails.color}\`} />
+            <div className={"w-12 h-12 rounded-2xl border flex items-center justify-center " + activePersonaDetails.border + " " + activePersonaDetails.bg}>
+              <activePersonaDetails.icon className={"w-6 h-6 " + activePersonaDetails.color} />
             </div>
             <div>
               <h3 className="font-headline text-2xl font-black leading-none uppercase tracking-tight">{activePersonaDetails.name}</h3>
               <p className="text-[10px] text-muted-foreground font-black uppercase tracking-widest mt-1">Live Connection</p>
             </div>
           </div>
-          <Badge variant="outline" className={\`\${activePersonaDetails.border} \${activePersonaDetails.color} font-black uppercase tracking-[0.2em] text-[9px] px-4 py-1.5\`}>
+          <Badge variant="outline" className={activePersonaDetails.border + " " + activePersonaDetails.color + " font-black uppercase tracking-[0.2em] text-[9px] px-4 py-1.5"}>
             Secure Link
           </Badge>
         </header>
@@ -205,19 +205,19 @@ function ChatContent() {
             
             {user && messages?.length === 0 && !isMessagesLoading && (
               <div className="text-center p-12 mt-20 opacity-50">
-                <activePersonaDetails.icon className={\`w-12 h-12 mx-auto mb-6 \${activePersonaDetails.color}\`} />
+                <activePersonaDetails.icon className={"w-12 h-12 mx-auto mb-6 " + activePersonaDetails.color} />
                 <p className="text-sm font-black uppercase tracking-widest text-muted-foreground">Channel Open. Awaiting Input.</p>
               </div>
             )}
 
             {user && messages?.map((m: any) => (
-              <div key={m.id} className={\`flex gap-4 \${m.senderType === "user" ? "flex-row-reverse" : ""}\`}>
-                <Avatar className={\`w-10 h-10 border \${m.senderType === "user" ? "border-white/10" : activePersonaDetails.border} shrink-0 mt-1\`}>
+              <div key={m.id} className={"flex gap-4 " + (m.senderType === "user" ? "flex-row-reverse" : "")}>
+                <Avatar className={"w-10 h-10 border shrink-0 mt-1 " + (m.senderType === "user" ? "border-white/10" : activePersonaDetails.border)}>
                   {m.senderType === "user" ? (
                     <AvatarImage src={user.photoURL || undefined} />
                   ) : (
-                    <div className={\`w-full h-full flex items-center justify-center \${activePersonaDetails.bg}\`}>
-                       <activePersonaDetails.icon className={\`w-5 h-5 \${activePersonaDetails.color}\`} />
+                    <div className={"w-full h-full flex items-center justify-center " + activePersonaDetails.bg}>
+                       <activePersonaDetails.icon className={"w-5 h-5 " + activePersonaDetails.color} />
                     </div>
                   )}
                   <AvatarFallback className={m.senderType === "user" ? "bg-white/5 text-white" : activePersonaDetails.bg}>
@@ -225,17 +225,17 @@ function ChatContent() {
                   </AvatarFallback>
                 </Avatar>
                 
-                <div className={\`flex flex-col max-w-[85%] \${m.senderType === "user" ? "items-end" : "items-start"}\`}>
+                <div className={"flex flex-col max-w-[85%] " + (m.senderType === "user" ? "items-end" : "items-start")}>
                   <div className="mb-1 px-1">
                     <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">
                       {m.senderType === "user" ? "You" : selectedPersona}
                     </span>
                   </div>
-                  <div className={\`p-5 rounded-3xl text-sm leading-relaxed \${
+                  <div className={"p-5 rounded-3xl text-sm leading-relaxed " + (
                     m.senderType === "user" 
                       ? "bg-white/10 text-white rounded-tr-none border border-white/10" 
                       : "bg-[#111115] border border-white/5 rounded-tl-none shadow-xl prose prose-invert prose-p:leading-relaxed prose-pre:bg-black/50 prose-pre:border prose-pre:border-white/10 max-w-none"
-                  }\`}>
+                  )}>
                     {m.senderType === "user" ? (
                       m.content
                     ) : (
@@ -248,9 +248,9 @@ function ChatContent() {
             
             {isLoading && (
               <div className="flex gap-4">
-                <Avatar className={\`w-10 h-10 border \${activePersonaDetails.border} shrink-0 mt-1\`}>
-                  <div className={\`w-full h-full flex items-center justify-center \${activePersonaDetails.bg}\`}>
-                     <activePersonaDetails.icon className={\`w-5 h-5 \${activePersonaDetails.color}\`} />
+                <Avatar className={"w-10 h-10 border shrink-0 mt-1 " + activePersonaDetails.border}>
+                  <div className={"w-full h-full flex items-center justify-center " + activePersonaDetails.bg}>
+                     <activePersonaDetails.icon className={"w-5 h-5 " + activePersonaDetails.color} />
                   </div>
                 </Avatar>
                 <div className="flex flex-col items-start">
@@ -273,18 +273,18 @@ function ChatContent() {
             <Input
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder={isLoading ? \`Awaiting response from \${selectedPersona}...\` : \`Message \${selectedPersona}...\`}
+              placeholder={isLoading ? "Awaiting response from " + selectedPersona + "..." : "Message " + selectedPersona + "..."}
               disabled={!user || isLoading}
               className="h-16 rounded-2xl bg-[#111115] border-white/10 pl-6 pr-20 focus-visible:ring-1 focus-visible:ring-white/20 focus-visible:border-white/20 transition-all font-medium text-base shadow-inner"
             />
             <Button 
               type="submit" 
               size="icon" 
-              className={\`absolute right-2 top-2 h-12 w-12 rounded-xl transition-all duration-300 \${
+              className={"absolute right-2 top-2 h-12 w-12 rounded-xl transition-all duration-300 " + (
                 input.trim() && !isLoading && user
-                  ? \`\${activePersonaDetails.bg} hover:brightness-125 \${activePersonaDetails.color}\`
+                  ? activePersonaDetails.bg + " hover:brightness-125 " + activePersonaDetails.color
                   : "bg-white/5 text-white/20"
-              }\`}
+              )}
               disabled={!input.trim() || isLoading || !user}
             >
               {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <SendHorizontal className="w-5 h-5" />}

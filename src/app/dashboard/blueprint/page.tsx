@@ -23,20 +23,20 @@ const phases = [
     tasks: [
       { name: "Define core DLX Roster (Lux, QPL, Newsician, Mic, Schwab)", status: "done" },
       { name: "Configure App Hosting & Cloud Run environment", status: "done" },
-      { name: "Implement Firebase Authentication (User Sessions)", status: "pending" },
+      { name: "Implement Firebase Authentication (User Sessions)", status: "done" },
       { name: "Set up Firestore schema (Users, Chats, Drive, Pipeline)", status: "pending" },
     ]
   },
   {
     id: "phase-2",
     title: "Phase 2: The DLX Chat & Communication Layer",
-    status: "pending",
+    status: "in-progress",
     description: "Bring the agents online via Genkit and connect the chat interface.",
     tasks: [
       { name: "Inject detailed system prompts into Genkit flows", status: "done" },
-      { name: "Wire Chat UI to streaming Genkit backend", status: "pending" },
-      { name: "Implement chat history persistence in Firestore", status: "pending" },
-      { name: "Build context-switching logic between personas", status: "pending" },
+      { name: "Wire Chat UI to streaming Genkit backend", status: "done" },
+      { name: "Implement chat history persistence in Firestore", status: "done" },
+      { name: "Build context-switching logic between personas", status: "done" },
     ]
   },
   {
@@ -82,7 +82,7 @@ export default function BlueprintPage() {
 
       <div className="grid gap-6">
         {phases.map((phase, index) => (
-          <Card key={phase.id} className={\`border-white/5 bg-[#0a0a0c] relative overflow-hidden \${phase.status === 'in-progress' ? 'ring-1 ring-primary/30' : ''}\`}>
+          <Card key={phase.id} className={"border-white/5 bg-[#0a0a0c] relative overflow-hidden " + (phase.status === 'in-progress' ? 'ring-1 ring-primary/30' : '')}>
             {phase.status === 'in-progress' && (
               <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 blur-[80px] rounded-full pointer-events-none" />
             )}
@@ -93,12 +93,12 @@ export default function BlueprintPage() {
                 </CardTitle>
                 <p className="text-xs text-muted-foreground font-medium">{phase.description}</p>
               </div>
-              <Badge variant="outline" className={\`
-                uppercase text-[9px] font-black tracking-widest px-3 py-1
-                \${phase.status === 'done' ? 'border-emerald-500/30 text-emerald-500 bg-emerald-500/10' : 
+              <Badge variant="outline" className={
+                "uppercase text-[9px] font-black tracking-widest px-3 py-1 " +
+                (phase.status === 'done' ? 'border-emerald-500/30 text-emerald-500 bg-emerald-500/10' : 
                   phase.status === 'in-progress' ? 'border-primary/30 text-primary bg-primary/10 animate-pulse' : 
-                  'border-white/10 text-muted-foreground'}
-              \`}>
+                  'border-white/10 text-muted-foreground')
+              }>
                 {phase.status.replace('-', ' ')}
               </Badge>
             </CardHeader>
@@ -113,7 +113,7 @@ export default function BlueprintPage() {
                     ) : (
                       <Circle className="w-4 h-4 text-muted-foreground/30 mt-0.5 shrink-0 group-hover:text-white/50 transition-colors" />
                     )}
-                    <span className={\`text-sm font-medium \${task.status === 'done' ? 'text-white/50 line-through' : 'text-white/90'}\`}>
+                    <span className={"text-sm font-medium " + (task.status === 'done' ? 'text-white/50 line-through' : 'text-white/90')}>
                       {task.name}
                     </span>
                   </li>
