@@ -1,3 +1,34 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "studio-smartfolio",
+      "description": "SmartFolio Investment Analysis",
+      "imageUrl": "https://picsum.photos/seed/investment/600/400",
+      "imageHint": "finance investment"
+    },
+    {
+      "id": "studio-music",
+      "description": "AI Music Studio",
+      "imageUrl": "https://picsum.photos/seed/music/600/400",
+      "imageHint": "music abstract"
+    },
+    {
+      "id": "studio-blog",
+      "description": "AI Content Studio",
+      "imageUrl": "https://picsum.photos/seed/writing/600/400",
+      "imageHint": "writing content"
+    },
+    {
+      "id": "news-update",
+      "description": "LuxAI Platform Update",
+      "imageUrl": "https://picsum.photos/seed/ai-news/800/400",
+      "imageHint": "artificial intelligence"
+    },
+    {
+      "id": "agent-lux",
+      "description": "Lux AI Persona",
+      "imageUrl": "https://picsum.photos/seed/lux/200/200",
+      "imageHint": "minimalist avatar"
+    }
+  ]
 }
