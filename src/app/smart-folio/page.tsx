@@ -1,19 +1,14 @@
-
 "use client"
 
 import * as React from "react"
 import { 
   TrendingUp, 
-  TrendingDown, 
-  RefreshCcw, 
   RotateCw,
-  Info,
-  ChevronDown,
-  Circle,
+  ChevronRight,
   Activity,
   Sparkles,
   Loader2,
-  ChevronRight
+  FileText
 } from "lucide-react"
 import { 
   PieChart, 
@@ -26,6 +21,9 @@ import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { smartFolioInsights, type SmartFolioInsightsOutput } from "@/ai/flows/smart-folio-insights"
+import { useFirestore, useUser } from "@/firebase"
+import { collection, serverTimestamp } from "firebase/firestore"
+import { addDocumentNonBlocking } from "@/firebase/non-blocking-updates"
 
 const allocationData = [
   { name: 'USD', value: 32.2, color: '#3b82f6' },
@@ -46,11 +44,13 @@ const assetTactics = [
 ]
 
 export default function SmartFolioHub() {
-  const [isAnalyzing, setIsAnalyzing] = React.useState(false)
-  const [aiReport, setAiReport] = React.useState<SmartFolioInsightsOutput | null>(null)
+  const { user } = useUser();
+  const db = useFirestore();
+  const [isAnalyzing, setIsAnalyzing] = React.useState(false);
+  const [aiReport, setAiReport] = React.useState<SmartFolioInsightsOutput | null>(null);
 
   const handleAiAnalysis = async () => {
-    setIsAnalyzing(true)
+    setIsAnalyzing(true);
     try {
       const result = await smartFolioInsights({
         currentPortfolioValue: 17582.96,
@@ -59,14 +59,27 @@ export default function SmartFolioHub() {
         investmentHorizonYears: 10,
         investmentGoals: 'Maximize growth through AI and decentralized compute tokens.',
         existingInvestmentsDescription: 'USD, ONDO, RENDER, FET, UNI, HYPE'
-      })
-      setAiReport(result)
+      });
+      setAiReport(result);
+
+      // Persist to Firestore if user is logged in
+      if (user && db) {
+        const reportsRef = collection(db, 'users', user.uid, 'smart_folio_reports');
+        addDocumentNonBlocking(reportsRef, {
+          userId: user.uid,
+          studioId: 'smart-folio',
+          inputDataSummary: 'Full Portfolio Snapshot (Aggressive Growth)',
+          reportContent: JSON.stringify(result),
+          createdAt: serverTimestamp(),
+          updatedAt: serverTimestamp(),
+        });
+      }
     } catch (error) {
-      console.error("Analysis failed:", error)
+      console.error("Analysis failed:", error);
     } finally {
-      setIsAnalyzing(false)
+      setIsAnalyzing(false);
     }
-  }
+  };
 
   return (
     <div className="p-8 space-y-10 bg-[#0a0a0c] min-h-full">
@@ -76,12 +89,11 @@ export default function SmartFolioHub() {
           <div className="flex items-center gap-3">
             <h1 className="font-headline text-3xl font-black tracking-tight uppercase">SmartFolio <span className="text-blue-500">v3.0</span></h1>
             <Badge variant="outline" className="border-white/10 text-[10px] font-black tracking-tighter text-muted-foreground uppercase">
-              BRIDGE ONLINE | GEMINI 2.5 FLASH ACTIVE
+              BRIDGE ONLINE | {aiReport ? "REPORT READY" : "AI ENGINE STANDING BY"}
             </Badge>
           </div>
         </div>
         <div className="flex items-center gap-2 p-1 bg-white/5 rounded-xl border border-white/5">
-          <Button variant="ghost" size="sm" className="h-8 text-[10px] font-black uppercase rounded-lg">Anchor</Button>
           <Button 
             onClick={handleAiAnalysis}
             disabled={isAnalyzing}
@@ -113,14 +125,14 @@ export default function SmartFolioHub() {
         ))}
       </div>
 
-      {/* AI Insights Panel (Conditionally Rendered) */}
+      {/* AI Insights Panel */}
       {aiReport && (
         <Card className="bg-blue-600/5 border-blue-500/20 p-8 rounded-3xl animate-in fade-in slide-in-from-top-4 duration-500">
           <div className="flex items-center gap-3 mb-6">
              <Sparkles className="w-6 h-6 text-blue-500" />
              <div>
                <h3 className="text-lg font-black uppercase tracking-tight">Tactical AI Analysis</h3>
-               <p className="text-[10px] text-muted-foreground font-black uppercase tracking-widest">Confidence Index: 98.4%</p>
+               <p className="text-[10px] text-muted-foreground font-black uppercase tracking-widest">Confidence Index: 98.4% | {user ? "Saved to Profile" : "Guest Mode"}</p>
              </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
@@ -153,7 +165,7 @@ export default function SmartFolioHub() {
                    </div>
                 </div>
                 <div className="flex gap-2">
-                   <Button variant="outline" className="flex-1 h-10 border-white/10 text-[9px] font-black uppercase">Export PDF</Button>
+                   <Button variant="outline" className="flex-1 h-10 border-white/10 text-[9px] font-black uppercase">Archive</Button>
                    <Button className="flex-1 h-10 bg-blue-600 hover:bg-blue-700 text-[9px] font-black uppercase">Execute Rebalance</Button>
                 </div>
              </div>
@@ -213,22 +225,16 @@ export default function SmartFolioHub() {
               ))}
             </div>
           </div>
-
-          <div className="mt-8">
-            <Button variant="outline" className="w-full rounded-xl border-white/10 bg-white/5 h-10 text-[10px] font-black uppercase tracking-widest gap-2">
-              <RefreshCcw className="w-3 h-3 text-blue-500" /> Balanced Rotation Active
-            </Button>
-          </div>
         </Card>
 
-        {/* Equity Curve Placeholder */}
+        {/* Equity Curve */}
         <Card className="lg:col-span-7 bg-[#0e0e11] border-white/5 p-6 rounded-3xl">
           <div className="flex items-center justify-between mb-8">
             <div className="flex items-center gap-2">
                <div className="w-2 h-2 rounded-full bg-white/20" />
                <h3 className="text-[10px] font-black uppercase tracking-widest">Equity Curve</h3>
             </div>
-            <span className="text-[10px] text-muted-foreground font-bold">Snapshot Mode</span>
+            <span className="text-[10px] text-muted-foreground font-bold">Live Data Trace</span>
           </div>
 
           <div className="h-64 w-full flex flex-col items-center justify-center border border-dashed border-white/5 rounded-2xl bg-white/[0.02]">
@@ -240,7 +246,7 @@ export default function SmartFolioHub() {
              </p>
              <div className="flex items-center gap-2 mt-6">
                 <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                <span className="text-[10px] font-bold text-green-500 uppercase tracking-widest">Live Monitoring Active</span>
+                <span className="text-[10px] font-bold text-green-500 uppercase tracking-widest">Grounded Feed Active</span>
              </div>
           </div>
         </Card>
@@ -254,14 +260,6 @@ export default function SmartFolioHub() {
              <h3 className="text-[10px] font-black uppercase tracking-widest">Altcoin Tactics</h3>
            </div>
            <div className="flex items-center gap-6">
-             <div className="text-center">
-               <p className="text-[10px] text-muted-foreground uppercase font-black tracking-tighter mb-0.5">Pos</p>
-               <p className="text-xs font-black">15</p>
-             </div>
-             <div className="text-center">
-               <p className="text-[10px] text-muted-foreground uppercase font-black tracking-tighter mb-0.5">Sentiment</p>
-               <p className="text-xs font-black">26 <span className="text-[10px] text-muted-foreground">/ 100</span></p>
-             </div>
              <Badge variant="outline" className="border-blue-500/30 text-blue-500 font-black text-[10px] rounded-full px-3 py-1 bg-blue-500/10">
                6 Active Positions
              </Badge>
@@ -276,7 +274,6 @@ export default function SmartFolioHub() {
                 <TableHead className="text-[10px] font-black text-muted-foreground uppercase h-12">Holdings</TableHead>
                 <TableHead className="text-[10px] font-black text-muted-foreground uppercase h-12">Basis</TableHead>
                 <TableHead className="text-[10px] font-black text-muted-foreground uppercase h-12">Price</TableHead>
-                <TableHead className="text-[10px] font-black text-muted-foreground uppercase h-12">PNL</TableHead>
                 <TableHead className="text-[10px] font-black text-muted-foreground uppercase h-12 text-right">Alloc vs Target</TableHead>
               </TableRow>
             </TableHeader>
@@ -308,17 +305,11 @@ export default function SmartFolioHub() {
                   <TableCell>
                     <div className="space-y-0.5">
                       <p className="text-xs font-black">{asset.basis}</p>
-                      <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-tighter">Avg</p>
                     </div>
                   </TableCell>
                   <TableCell>
                     <div className="space-y-0.5">
                       <p className="text-xs font-black text-blue-500">{asset.price}</p>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className={`text-xs font-black ${asset.pnl.startsWith('+') ? 'text-green-500' : asset.pnl.startsWith('-') ? 'text-rose-500' : ''}`}>
-                      {asset.pnl}
                     </div>
                   </TableCell>
                   <TableCell className="text-right">

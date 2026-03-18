@@ -1,35 +1,23 @@
+"use client"
 
+import * as React from 'react';
 import Image from 'next/image';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Card, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Newspaper, Sparkles, ExternalLink } from 'lucide-react';
-import { PlaceHolderImages } from '@/lib/placeholder-images';
-
-const newsItems = [
-  {
-    title: "LuxAI v2.4 Release: Neural Context Engines",
-    date: "March 15, 2024",
-    category: "Platform",
-    excerpt: "We're introducing a new architecture for persona memory management, allowing for significantly longer and more coherent conversations.",
-    image: PlaceHolderImages.find(img => img.id === 'news-update')?.imageUrl,
-  },
-  {
-    title: "The Rise of Specialized LLMs in Finance",
-    date: "March 12, 2024",
-    category: "AI Research",
-    excerpt: "New studies show that domain-specific fine-tuning outperforms general models like GPT-4 in niche investment strategy generation.",
-    image: "https://picsum.photos/seed/finance-news/800/400",
-  },
-  {
-    title: "Labs Update: SonicGen reaches 44.1kHz fidelity",
-    date: "March 10, 2024",
-    category: "Labs",
-    excerpt: "Our experimental music studio can now generate CD-quality audio stems directly from text prompts with minimal latency.",
-    image: "https://picsum.photos/seed/audio-news/800/400",
-  }
-];
+import { Newspaper, ExternalLink, Loader2 } from 'lucide-react';
+import { useCollection, useFirestore, useMemoFirebase } from '@/firebase';
+import { collection, query, orderBy, limit } from 'firebase/firestore';
 
 export default function NewsPage() {
+  const db = useFirestore();
+  
+  const newsQuery = useMemoFirebase(() => {
+    if (!db) return null;
+    return query(collection(db, 'news_articles'), orderBy('publishDate', 'desc'), limit(10));
+  }, [db]);
+
+  const { data: newsItems, isLoading } = useCollection(newsQuery);
+
   return (
     <div className="max-w-4xl mx-auto py-6">
       <div className="flex items-center gap-4 mb-10">
@@ -37,39 +25,54 @@ export default function NewsPage() {
           <Newspaper className="w-6 h-6 text-accent" />
         </div>
         <div>
-          <h1 className="font-headline text-3xl font-black tracking-tight">Intelligence Feed</h1>
-          <p className="text-muted-foreground font-medium">Updates, research, and platform announcements.</p>
+          <h1 className="font-headline text-3xl font-black tracking-tight uppercase">Intelligence Feed</h1>
+          <p className="text-[10px] text-muted-foreground font-black uppercase tracking-widest mt-1">Grounded platform updates & AI research reports</p>
         </div>
       </div>
 
       <div className="space-y-10">
-        {newsItems.map((item, i) => (
-          <Card key={i} className="group overflow-hidden border-white/5 bg-card/40 hover:bg-card/60 transition-all cursor-pointer">
+        {isLoading && (
+          <div className="flex flex-col items-center justify-center py-20 space-y-4">
+            <Loader2 className="w-8 h-8 animate-spin text-accent" />
+            <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Syncing News Feed...</p>
+          </div>
+        )}
+
+        {!isLoading && newsItems?.map((item, i) => (
+          <Card key={item.id} className="group overflow-hidden border-white/5 bg-[#0a0a0c]/40 hover:bg-[#0a0a0c]/60 transition-all cursor-pointer rounded-3xl">
             <div className="flex flex-col md:flex-row">
-              <div className="md:w-1/3 relative aspect-video md:aspect-auto">
+              <div className="md:w-1/3 relative aspect-video md:aspect-auto overflow-hidden">
                 <Image 
-                  src={item.image || ''} 
+                  src={`https://picsum.photos/seed/${item.id}/800/400`} 
                   alt={item.title}
                   fill
-                  className="object-cover"
+                  className="object-cover group-hover:scale-105 transition-transform duration-700"
                 />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0c] via-transparent to-transparent" />
               </div>
-              <div className="flex-1 p-6">
-                <div className="flex items-center gap-3 mb-3">
-                  <Badge variant="secondary" className="bg-primary/20 text-primary font-bold">{item.category}</Badge>
-                  <span className="text-xs text-muted-foreground font-bold uppercase tracking-widest">{item.date}</span>
+              <div className="flex-1 p-8">
+                <div className="flex items-center gap-3 mb-4">
+                  <Badge variant="outline" className="border-accent/30 text-accent font-black text-[9px] uppercase tracking-widest">{item.category || 'Platform'}</Badge>
+                  <span className="text-[9px] text-muted-foreground font-black uppercase tracking-widest">{new Date(item.publishDate).toLocaleDateString()}</span>
                 </div>
-                <CardTitle className="font-headline text-xl mb-3 group-hover:text-primary transition-colors">{item.title}</CardTitle>
-                <p className="text-muted-foreground text-sm font-medium leading-relaxed mb-6">
-                  {item.excerpt}
+                <CardTitle className="font-headline text-2xl font-black mb-4 group-hover:text-accent transition-colors tracking-tight uppercase leading-tight">{item.title}</CardTitle>
+                <p className="text-muted-foreground text-sm font-medium leading-relaxed mb-8 opacity-80">
+                  {item.content.length > 150 ? item.content.substring(0, 150) + '...' : item.content}
                 </p>
-                <div className="flex items-center text-xs font-bold text-accent group-hover:underline uppercase tracking-widest">
-                  Read Full Report <ExternalLink className="w-3 h-3 ml-2" />
+                <div className="flex items-center text-[10px] font-black text-accent group-hover:underline uppercase tracking-[0.2em]">
+                  Read Full Signal <ExternalLink className="w-3.5 h-3.5 ml-2" />
                 </div>
               </div>
             </div>
           </Card>
         ))}
+
+        {!isLoading && newsItems?.length === 0 && (
+          <div className="text-center p-20 border-2 border-dashed border-white/5 rounded-[3rem]">
+            <Newspaper className="w-12 h-12 text-muted-foreground/10 mx-auto mb-4" />
+            <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/30">No news signals detected in the matrix.</p>
+          </div>
+        )}
       </div>
     </div>
   )
