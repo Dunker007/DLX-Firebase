@@ -1,4 +1,3 @@
-
 "use client"
 
 import Image from 'next/image';
@@ -11,6 +10,16 @@ import { Sparkles, PieChart, Music, FileText, Zap, ChevronRight, Video, LayoutGr
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 
 const studios = [
+  {
+    id: 'video-studio',
+    title: 'Vids Production',
+    description: 'Enterprise video storyboarder and production editor for professional storytelling.',
+    icon: Video,
+    status: 'Live',
+    image: 'https://picsum.photos/seed/vids-studio/600/400',
+    href: '/studios/video',
+    color: 'hsl(217 91% 60%)'
+  },
   {
     id: 'smart-folio',
     title: 'DLX SmartFolio',
@@ -32,16 +41,6 @@ const studios = [
     color: 'hsl(var(--accent))'
   },
   {
-    id: 'video-studio',
-    title: 'DLX Video (Veo)',
-    description: 'Generate high-fidelity cinematic videos using Google Veo.',
-    icon: Video,
-    status: 'Beta',
-    image: 'https://picsum.photos/seed/video-gen/600/400',
-    href: '/studios/video',
-    color: 'hsl(var(--primary))'
-  },
-  {
     id: 'content-studio',
     title: 'CopyArchitect',
     description: 'Advanced blog and technical content generation toolkit.',
@@ -57,7 +56,7 @@ const studios = [
     description: 'Generative image and branding assets for modern teams.',
     icon: Palette,
     status: 'Live',
-    image: 'https://picsum.photos/seed/vision/600/400',
+    image: 'https://picsum.photos/seed/art-studio/600/400',
     href: '/studios/art',
     color: 'hsl(24 95% 53%)'
   }
@@ -82,17 +81,17 @@ export default function StudiosHubPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {studios.map((studio) => (
-              <Card key={studio.id} className="group overflow-hidden border-white/5 bg-card/40 hover:bg-card/60 transition-all duration-300">
+              <Card key={studio.id} className="group overflow-hidden border-white/5 bg-card/40 hover:bg-card/60 transition-all duration-500 relative rounded-3xl">
                 <div className="aspect-video relative overflow-hidden">
                   <Image 
                     src={studio.image || ''} 
                     alt={studio.title}
                     fill
-                    className="object-cover transition-transform duration-500 group-hover:scale-105"
+                    className="object-cover transition-transform duration-700 group-hover:scale-105 opacity-80 group-hover:opacity-100"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent" />
                   <Badge 
-                    className={`absolute top-4 right-4 rounded-full px-3 py-1 font-bold ${
+                    className={`absolute top-4 right-4 rounded-full px-3 py-1 font-black text-[10px] tracking-widest ${
                       studio.status === 'Live' ? 'bg-primary neon-glow' : 
                       studio.status === 'Beta' ? 'bg-accent accent-glow' : 'bg-muted text-muted-foreground'
                     }`}
@@ -101,23 +100,23 @@ export default function StudiosHubPage() {
                   </Badge>
                 </div>
                 <CardHeader className="relative -mt-8 pt-0 pb-2">
-                  <div className="w-12 h-12 rounded-xl bg-background border border-white/5 flex items-center justify-center mb-4 shadow-xl group-hover:border-primary/30 transition-colors">
+                  <div className="w-12 h-12 rounded-xl bg-background border border-white/10 flex items-center justify-center mb-4 shadow-xl group-hover:border-primary/30 transition-colors">
                     <studio.icon className="w-6 h-6" style={{ color: studio.color }} />
                   </div>
-                  <CardTitle className="font-headline text-xl font-bold uppercase">{studio.title}</CardTitle>
+                  <CardTitle className="font-headline text-xl font-black uppercase tracking-tight">{studio.title}</CardTitle>
                 </CardHeader>
                 <CardContent className="pb-4">
-                  <p className="text-muted-foreground text-sm font-medium h-10 overflow-hidden">{studio.description}</p>
+                  <p className="text-muted-foreground text-xs font-medium h-10 overflow-hidden leading-relaxed">{studio.description}</p>
                 </CardContent>
                 <CardFooter className="pt-0">
                   <Button 
                     asChild 
                     variant={studio.status === 'Coming Soon' ? 'ghost' : 'default'} 
                     disabled={studio.status === 'Coming Soon'}
-                    className="w-full group/btn rounded-xl"
+                    className="w-full group/btn rounded-xl bg-white/5 hover:bg-primary transition-all duration-300 border border-white/10"
                   >
-                    <Link href={studio.href} className="flex items-center justify-center gap-2">
-                      {studio.status === 'Coming Soon' ? 'Request Access' : 'Enter Studio'}
+                    <Link href={studio.href} className="flex items-center justify-center gap-2 font-black uppercase text-[10px] tracking-widest">
+                      {studio.status === 'Coming Soon' ? 'Access Restricted' : 'Enter Studio'}
                       <ChevronRight className="w-4 h-4 transition-transform group-hover/btn:translate-x-1" />
                     </Link>
                   </Button>

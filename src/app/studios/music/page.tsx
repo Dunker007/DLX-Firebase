@@ -1,4 +1,3 @@
-
 "use client"
 
 import * as React from "react"
@@ -35,10 +34,10 @@ const modes = [
 ]
 
 const pipeline = [
-  { name: 'Suno AI', icon: Music },
-  { name: 'Google Vids', icon: Video },
-  { name: 'DaVinci Resolve', icon: Settings2 },
-  { name: 'YouTube', icon: Youtube },
+  { name: 'Suno AI', icon: Music, status: 'Connected' },
+  { name: 'Vids Production', icon: Video, status: 'Linked' },
+  { name: 'DaVinci Resolve', icon: Settings2, status: 'Ready' },
+  { name: 'YouTube Channel', icon: Youtube, status: 'Active' },
 ]
 
 export default function MusicStudioPage() {
@@ -55,45 +54,30 @@ export default function MusicStudioPage() {
             </div>
             <div>
               <div className="flex items-center gap-3">
-                <h1 className="font-headline text-3xl font-black uppercase tracking-tight">MusicStudio</h1>
+                <h1 className="font-headline text-3xl font-black uppercase tracking-tight">SonicGen Hub</h1>
                 <Badge variant="outline" className="border-rose-500/30 text-rose-500 text-[10px] font-black tracking-widest bg-rose-500/5">
-                  BRIDGE OFFLINE
-                </Badge>
-                <Badge variant="outline" className="border-green-500/30 text-green-500 text-[10px] font-black tracking-widest bg-green-500/5">
-                  3 AGENTS
+                  STUDIO BRIDGE ACTIVE
                 </Badge>
               </div>
-              <p className="text-[10px] text-muted-foreground font-black uppercase tracking-[0.2em] mt-1">Suno → Google Vids → DaVinci → YouTube</p>
+              <p className="text-[10px] text-muted-foreground font-black uppercase tracking-[0.2em] mt-1">Suno → Vids Editor → DaVinci → YouTube</p>
             </div>
           </div>
           <div className="flex items-center gap-3 p-1 bg-white/5 rounded-xl border border-white/5">
              <Button variant="ghost" size="sm" className="h-9 text-[10px] font-black uppercase rounded-lg gap-2">
-               <Plus className="w-3 h-3" /> Create
+               <Plus className="w-3 h-3" /> New Session
              </Button>
-             <Button variant="ghost" size="sm" className="h-9 text-[10px] font-black uppercase rounded-lg gap-2">
-               <Library className="w-3 h-3" /> Library
-             </Button>
-             <Button variant="default" className="h-9 bg-purple-600 hover:bg-purple-700 text-[10px] font-black uppercase rounded-lg shadow-lg shadow-purple-600/20">
-               Studio Mode
+             <Button variant="default" className="h-9 bg-purple-600 hover:bg-purple-700 text-[10px] font-black uppercase rounded-lg shadow-lg shadow-purple-600/20 px-6">
+               Mastering View
              </Button>
           </div>
         </header>
-
-        {/* Status Alert */}
-        <div className="p-4 rounded-xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-2 h-2 rounded-full bg-rose-500 animate-pulse" />
-            <p className="text-xs font-bold text-rose-500 uppercase tracking-widest">Bridge Offline - using fallback agents</p>
-          </div>
-          <Button variant="outline" size="sm" className="h-7 border-rose-500/30 text-[10px] font-black uppercase hover:bg-rose-500/10">Retry Connection</Button>
-        </div>
 
         {/* Main Interface Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           {/* Left Panel: Modes & Source */}
           <div className="lg:col-span-3 space-y-6">
              <section className="space-y-3">
-                <p className="text-[10px] text-muted-foreground uppercase font-black tracking-widest px-2">Mode</p>
+                <p className="text-[10px] text-muted-foreground uppercase font-black tracking-widest px-2">Production Persona</p>
                 <div className="space-y-1">
                   {modes.map((mode) => (
                     <button
@@ -113,7 +97,7 @@ export default function MusicStudioPage() {
                         <mode.icon className="w-5 h-5" />
                       </div>
                       <div>
-                        <h4 className="text-xs font-black uppercase">{mode.name}</h4>
+                        <h4 className="text-xs font-black uppercase tracking-tight">{mode.name}</h4>
                         <p className="text-[10px] text-muted-foreground font-medium">{mode.desc}</p>
                       </div>
                     </button>
@@ -123,65 +107,72 @@ export default function MusicStudioPage() {
 
              <Card className="bg-white/5 border-white/5 p-6 rounded-2xl">
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-[10px] font-black uppercase tracking-widest">Source Material</h3>
+                  <h3 className="text-[10px] font-black uppercase tracking-widest">Neural Source</h3>
                   <Library className="w-4 h-4 text-muted-foreground/30" />
                 </div>
-                <div className="h-32 flex flex-col items-center justify-center text-center">
-                  <p className="text-[10px] text-muted-foreground font-medium max-w-[160px]">No news loaded. Check bridge connection.</p>
+                <div className="space-y-4">
+                  <div className="p-3 bg-black/40 border border-white/5 rounded-xl">
+                    <p className="text-[9px] font-black text-purple-400 uppercase mb-1 tracking-widest">Active Feed</p>
+                    <p className="text-[10px] font-medium text-white/70 leading-relaxed">Analyzing current macro signals for lyrical sentiment...</p>
+                  </div>
                 </div>
              </Card>
           </div>
 
           {/* Center Panel: Preview & Console */}
           <div className="lg:col-span-6 space-y-6">
-             <Card className="aspect-video bg-[#0c0c0e] border-white/5 rounded-3xl flex flex-col items-center justify-center relative overflow-hidden group">
+             <Card className="aspect-video bg-[#0c0c0e] border-white/5 rounded-3xl flex flex-col items-center justify-center relative overflow-hidden group border-dashed">
                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(147,51,234,0.1),transparent)]" />
-                <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500">
+                <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500 shadow-2xl">
                   <Music className="w-8 h-8 text-purple-600" />
                 </div>
-                <h2 className="font-headline text-3xl font-black mb-2 uppercase tracking-tighter">Studio Ready</h2>
+                <h2 className="font-headline text-3xl font-black mb-2 uppercase tracking-tighter">Composition Studio</h2>
                 <p className="text-xs text-muted-foreground font-medium max-w-[300px] text-center leading-relaxed">
-                  Enter a theme, select genre and mood, then generate your next hit.
+                  Bridge established. Compositional engine standing by for theme input.
                 </p>
+                <div className="absolute bottom-6 flex items-center gap-2">
+                   <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                   <span className="text-[9px] font-black uppercase text-green-500 tracking-widest">Neural Link Syncing...</span>
+                </div>
              </Card>
 
              <Card className="bg-white/5 border-white/5 p-8 rounded-3xl">
                 <div className="flex items-center gap-2 mb-6">
                   <Zap className="w-4 h-4 text-purple-600" />
-                  <h3 className="text-[10px] font-black uppercase tracking-widest">Configuration</h3>
+                  <h3 className="text-[10px] font-black uppercase tracking-widest">Track Synthesis</h3>
                 </div>
                 <div className="space-y-6">
                    <div className="space-y-2">
-                     <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Topic / Theme</label>
+                     <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Master Prompt / Theme</label>
                      <Textarea 
-                       placeholder="e.g. Neon city nights, rain on glass, digital dreams..." 
-                       className="bg-black/40 border-white/5 h-24 rounded-xl focus:ring-purple-600/50"
+                       placeholder="Describe the sonic atmosphere, BPM, and lyrical direction..." 
+                       className="bg-black/40 border-white/5 h-24 rounded-xl focus:ring-purple-600/50 resize-none"
                      />
                    </div>
                    <div className="grid grid-cols-2 gap-6">
                       <div className="space-y-3">
-                        <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Genre</label>
+                        <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Style Profile</label>
                         <div className="flex flex-wrap gap-2">
-                          {['Pop', 'EDM', 'Lo-Fi', 'Synthwave', 'Ambient'].map(g => (
-                            <Badge key={g} variant="outline" className="cursor-pointer hover:bg-white/5 h-7 px-3 rounded-lg text-[10px] font-black uppercase">
+                          {['Hype', 'Dark', 'Lush', 'Gritty', 'Cinematic'].map(g => (
+                            <Badge key={g} variant="outline" className="cursor-pointer hover:bg-white/5 h-8 px-4 rounded-lg text-[9px] font-black uppercase border-white/5">
                               {g}
                             </Badge>
                           ))}
                         </div>
                       </div>
                       <div className="space-y-3">
-                        <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Mood</label>
+                        <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Vibe Matrix</label>
                         <div className="flex flex-wrap gap-2">
-                          {['Uplifting', 'Chill', 'Dark', 'Emotional'].map(m => (
-                            <Badge key={m} variant="outline" className="cursor-pointer hover:bg-white/5 h-7 px-3 rounded-lg text-[10px] font-black uppercase">
+                          {['Pro', 'Raw', 'Vocal', 'Dub'].map(m => (
+                            <Badge key={m} variant="outline" className="cursor-pointer hover:bg-white/5 h-8 px-4 rounded-lg text-[9px] font-black uppercase border-white/5">
                               {m}
                             </Badge>
                           ))}
                         </div>
                       </div>
                    </div>
-                   <Button className="w-full h-12 bg-purple-600 hover:bg-purple-700 font-black uppercase tracking-widest rounded-xl shadow-lg shadow-purple-600/20">
-                      Generate Track <ChevronRight className="w-4 h-4 ml-2" />
+                   <Button className="w-full h-14 bg-purple-600 hover:bg-purple-700 font-black uppercase tracking-widest rounded-2xl shadow-xl shadow-purple-600/20">
+                      Synthesize Master <ChevronRight className="w-4 h-4 ml-2" />
                    </Button>
                 </div>
              </Card>
@@ -191,43 +182,43 @@ export default function MusicStudioPage() {
           <div className="lg:col-span-3 space-y-6">
              <Card className="bg-white/5 border-white/5 p-6 rounded-2xl">
                 <div className="flex items-center justify-between mb-8">
-                  <h3 className="text-[10px] font-black uppercase tracking-widest">Production Pipeline</h3>
+                  <h3 className="text-[10px] font-black uppercase tracking-widest">Workflow Pipeline</h3>
                   <Settings2 className="w-4 h-4 text-muted-foreground/30" />
                 </div>
                 <div className="space-y-8 relative">
-                   <div className="absolute left-5 top-0 bottom-0 w-px bg-white/5" />
+                   <div className="absolute left-5 top-0 bottom-0 w-px bg-white/10" />
                    {pipeline.map((step, i) => (
                      <div key={step.name} className="flex items-center gap-4 relative">
                         <div className={cn(
                           "w-10 h-10 rounded-xl bg-background border flex items-center justify-center shrink-0 z-10",
-                          i === 0 ? "border-purple-600/50" : "border-white/5"
+                          i === 0 ? "border-purple-600/50 shadow-[0_0_10px_rgba(147,51,234,0.2)]" : "border-white/10"
                         )}>
-                          <step.icon className={cn("w-5 h-5", i === 0 ? "text-purple-600" : "text-muted-foreground")} />
+                          <step.icon className={cn("w-5 h-5", i === 0 ? "text-purple-600" : "text-muted-foreground/50")} />
                         </div>
                         <div className="flex-1">
-                           <p className="text-[10px] font-black uppercase">{step.name}</p>
-                           {i === 0 && <p className="text-[8px] font-bold text-purple-600 uppercase">Awaiting Input</p>}
+                           <p className="text-[10px] font-black uppercase tracking-tight">{step.name}</p>
+                           <p className="text-[8px] font-bold text-muted-foreground/50 uppercase">{step.status}</p>
                         </div>
-                        <ChevronRight className="w-3 h-3 text-muted-foreground/20" />
+                        <ChevronRight className="w-3.5 h-3.5 text-muted-foreground/20" />
                      </div>
                    ))}
                 </div>
              </Card>
 
              <div className="space-y-3">
-                <p className="text-[10px] text-muted-foreground uppercase font-black tracking-widest px-2">Publishing Hub</p>
+                <p className="text-[10px] text-muted-foreground uppercase font-black tracking-widest px-2">Global Distribution</p>
                 <div className="grid gap-2">
                    {[
-                     { name: 'YouTube', icon: Youtube, color: 'text-red-500' },
-                     { name: 'TikTok', icon: Music, color: 'text-cyan-400' },
-                     { name: 'DistroKid', icon: Library, color: 'text-blue-500' }
+                     { name: 'YouTube Master', icon: Youtube, color: 'text-red-500' },
+                     { name: 'TikTok Trend', icon: Music, color: 'text-cyan-400' },
+                     { name: 'Spotify Release', icon: Library, color: 'text-green-500' }
                    ].map(p => (
-                     <button key={p.name} className="w-full flex items-center justify-between p-4 bg-white/5 border border-white/5 rounded-xl hover:bg-white/10 transition-colors">
+                     <button key={p.name} className="w-full flex items-center justify-between p-4 bg-white/5 border border-white/5 rounded-2xl hover:bg-white/10 transition-all group">
                         <div className="flex items-center gap-3">
-                           <p.icon className={cn("w-4 h-4", p.color)} />
-                           <span className="text-xs font-bold">{p.name}</span>
+                           <p.icon className={cn("w-4 h-4 transition-transform group-hover:scale-110", p.color)} />
+                           <span className="text-[10px] font-black uppercase">{p.name}</span>
                         </div>
-                        <ExternalLink className="w-3 h-3 text-muted-foreground/30" />
+                        <ExternalLink className="w-3.5 h-3.5 text-muted-foreground/20 group-hover:text-white transition-colors" />
                      </button>
                    ))}
                 </div>

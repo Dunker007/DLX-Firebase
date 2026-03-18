@@ -1,4 +1,3 @@
-
 import Image from 'next/image';
 import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
@@ -10,11 +9,11 @@ import { PlaceHolderImages } from '@/lib/placeholder-images';
 const featuredStudios = [
   {
     id: 'video-studio',
-    title: 'Google Vids Production',
-    description: 'Enterprise AI video editor for professional storyboarding and creation.',
+    title: 'Vids Production',
+    description: 'Enterprise AI video editor for professional storyboarding and multi-scene creation.',
     icon: Video,
     status: 'Live',
-    image: 'https://picsum.photos/seed/google-vids/600/400',
+    image: 'https://picsum.photos/seed/vids-editor/600/400',
     href: '/studios/video',
     color: 'hsl(217 91% 60%)'
   },
@@ -31,7 +30,7 @@ const featuredStudios = [
   {
     id: 'music-studio',
     title: 'SonicGen Hub',
-    description: 'Neural soundscapes and composition with enterpriseSun integration.',
+    description: 'Neural soundscapes and composition with high-fidelity studio integration.',
     icon: Music,
     status: 'Live',
     image: PlaceHolderImages.find(img => img.id === 'studio-music')?.imageUrl,
