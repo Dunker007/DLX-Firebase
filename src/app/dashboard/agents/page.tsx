@@ -1,4 +1,5 @@
 
+import Link from 'next/link';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -82,8 +83,10 @@ export default function AgentsHubPage() {
               </div>
 
               <div className="flex items-center gap-2">
-                <Button size="sm" variant="secondary" className="flex-1 rounded-lg">
-                  <PlayCircle className="w-4 h-4 mr-2" /> Chat
+                <Button size="sm" variant="secondary" className="flex-1 rounded-lg" asChild>
+                  <Link href={`/chat?persona=${agent.name}`}>
+                    <PlayCircle className="w-4 h-4 mr-2" /> Chat
+                  </Link>
                 </Button>
                 <Button size="icon" variant="outline" className="border-white/10 rounded-lg">
                   <Settings2 className="w-4 h-4" />

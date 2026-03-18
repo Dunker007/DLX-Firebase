@@ -2,6 +2,7 @@
 "use client"
 
 import * as React from "react"
+import { useSearchParams } from "next/navigation"
 import { Send, User, Bot, Sparkles, ChevronLeft, Info } from "lucide-react"
 import { chatWithAIAgentPersona, type ChatAIPersonaInput } from "@/ai/flows/chat-ai-persona"
 import { Button } from "@/components/ui/button"
@@ -25,13 +26,40 @@ const personas = [
 ] as const
 
 export default function ChatPage() {
-  const [selectedPersona, setSelectedPersona] = React.useState<typeof personas[number]["name"]>("Lux")
+  const searchParams = useSearchParams()
+  const initialPersona = searchParams.get("persona") as typeof personas[number]["name"] | null
+  
+  const [selectedPersona, setSelectedPersona] = React.useState<typeof personas[number]["name"]>(
+    initialPersona && personas.some(p => p.name === initialPersona) ? initialPersona : "Lux"
+  )
   const [input, setInput] = React.useState("")
   const [messages, setMessages] = React.useState<Message[]>([
-    { id: "1", role: "assistant", content: "Greetings. I am Lux. How can I assist you in the LuxAI environment today?", persona: "Lux" }
+    { 
+      id: "1", 
+      role: "assistant", 
+      content: initialPersona === "Architect" 
+        ? "Systems check complete. I am Architect. How can I help you structure your ideas today?" 
+        : initialPersona === "Dev"
+        ? "Dev here. Ready to debug or build. What's the mission?"
+        : "Greetings. I am Lux. How can I assist you in the LuxAI environment today?", 
+      persona: initialPersona && personas.some(p => p.name === initialPersona) ? initialPersona : "Lux" 
+    }
   ])
   const [isLoading, setIsLoading] = React.useState(false)
   const scrollAreaRef = React.useRef<HTMLDivElement>(null)
+
+  // Update initial message if selected persona changes via click
+  React.useEffect(() => {
+    if (messages.length === 1 && messages[0].role === "assistant") {
+      const content = selectedPersona === "Architect" 
+        ? "Systems check complete. I am Architect. How can I help you structure your ideas today?" 
+        : selectedPersona === "Dev"
+        ? "Dev here. Ready to debug or build. What's the mission?"
+        : "Greetings. I am Lux. How can I assist you in the LuxAI environment today?"
+      
+      setMessages([{ id: "1", role: "assistant", content, persona: selectedPersona }])
+    }
+  }, [selectedPersona])
 
   const handleSend = async (e?: React.FormEvent) => {
     e?.preventDefault()
