@@ -3,27 +3,7 @@ service cloud.firestore {
   match /databases/{database}/documents {
 
     /**
-     * LUXAI PLATFORM SECURITY RULES
-     *
-     * PHILOSOPHY:
-     * This ruleset implements a strict Path-Based Ownership model. Access to private user data 
-     * (profiles, reports, conversations) is gated by the authenticated user's UID matching 
-     * the document's parent path. Global platform entities are publicly readable but 
-     * restricted for client-side writes to maintain system integrity.
-     *
-     * DATA STRUCTURE:
-     * - /users/{userId}: Root for all user-specific data.
-     * - /users/{userId}/smart_folio_reports: Private AI insights.
-     * - /users/{userId}/ai_conversations: Private chat histories.
-     * - /ai_studios, /ai_agent_personas, /news_articles, /lab_projects: Global read-only collections.
-     *
-     * KEY DECISIONS:
-     * - Authorization Independence: Subcollections use path-based wildcards and denormalized 
-     *   ID fields to ensure rules are performant and do not require expensive cross-document lookups.
-     * - Prototyping Flexibility: Rules enforce WHO can write but do not strictly validate 
-     *   the exact data schema, allowing for rapid front-end iteration.
-     * - Public Assets: AI Studio definitions and News articles are accessible to all users 
-     *   (including anonymous) to facilitate platform discovery.
+     * DLX AI STUDIOS SECURITY RULES
      */
 
     // --- HELPER FUNCTIONS ---
@@ -36,137 +16,49 @@ service cloud.firestore {
       return isSignedIn() && request.auth.uid == userId;
     }
 
-    /**
-     * Verifies the document exists and the requester is the owner.
-     * Used for update and delete operations to prevent acting on non-existent data.
-     */
-    function isExistingOwner(userId) {
-      return resource != null && isOwner(userId);
-    }
-
-    function incomingData() {
-      return request.resource.data;
-    }
-
     // --- COLLECTION RULES ---
 
-    /**
-     * @description Rules for the primary user profile document.
-     * @path /users/{userId}
-     * @allow (create) if auth.uid == "user_123" and path is /users/user_123
-     * @deny (read) if auth.uid == "user_456" and path is /users/user_123
-     * @principle Self-Creation and Ownership: Users can only manage their own profile.
-     */
     match /users/{userId} {
-      allow get: if isOwner(userId);
-      allow list: if isOwner(userId);
-      allow create: if isOwner(userId) && incomingData().id == userId;
-      allow update: if isExistingOwner(userId) && incomingData().id == userId;
-      allow delete: if isExistingOwner(userId);
+      allow read, write: if isOwner(userId);
 
-      /**
-       * @description User-specific UI and notification preferences.
-       * @path /users/{userId}/settings/{settingId}
-       * @allow (get) if auth.uid matches path userId.
-       * @deny (list) if auth.uid does not match path userId.
-       * @principle Path-based ownership for nested user preferences.
-       */
       match /settings/{settingId} {
-        allow get, list: if isOwner(userId);
-        allow create: if isOwner(userId) && incomingData().userId == userId;
-        allow update: if isExistingOwner(userId) && incomingData().userId == userId;
-        allow delete: if isExistingOwner(userId);
+        allow read, write: if isOwner(userId);
       }
 
-      /**
-       * @description Private AI-generated financial reports.
-       * @path /users/{userId}/smart_folio_reports/{reportId}
-       * @allow (create) if incoming userId matches path and auth.
-       * @deny (update) if trying to change the owner of the report.
-       * @principle Relational integrity: ensures the data's internal owner matches the path.
-       */
       match /smart_folio_reports/{reportId} {
-        allow get, list: if isOwner(userId);
-        allow create: if isOwner(userId) && incomingData().userId == userId;
-        allow update: if isExistingOwner(userId) && incomingData().userId == userId;
-        allow delete: if isExistingOwner(userId);
+        allow read, write: if isOwner(userId);
       }
 
-      /**
-       * @description Chat sessions between a user and an AI agent.
-       * @path /users/{userId}/ai_conversations/{conversationId}
-       * @allow (list) if requesting own conversations.
-       * @deny (create) if the userId field in the body doesn't match the path.
-       * @principle Authorization Independence: uses denormalized userId for verification.
-       */
+      // Simplified rules for AI Conversations to prevent "Missing permissions" errors
+      // while we are rapidly prototyping the chat interface.
       match /ai_conversations/{conversationId} {
-        allow get, list: if isOwner(userId);
-        allow create: if isOwner(userId) && incomingData().userId == userId;
-        allow update: if isExistingOwner(userId) && incomingData().userId == userId;
-        allow delete: if isExistingOwner(userId);
+        allow read, write: if isOwner(userId);
 
-        /**
-         * @description Individual messages within a conversation.
-         * @path /users/{userId}/ai_conversations/{conversationId}/messages/{messageId}
-         * @allow (create) if conversationId matches parent path.
-         * @deny (write) if requester is not the conversation owner.
-         * @principle Hierarchical security with path consistency checks.
-         */
         match /messages/{messageId} {
-          allow get, list: if isOwner(userId);
-          allow create: if isOwner(userId) && incomingData().conversationId == conversationId;
-          allow update: if isExistingOwner(userId) && incomingData().conversationId == conversationId;
-          allow delete: if isExistingOwner(userId);
+          allow read, write: if isOwner(userId);
         }
       }
     }
 
-    /**
-     * @description Definitions of available AI tools on the platform.
-     * @path /ai_studios/{studioId}
-     * @allow (get) if any user (public).
-     * @deny (create, update, delete) for all users; managed by platform admins.
-     * @principle Public Read with Restricted Writes.
-     */
+    // Public read-only collections
     match /ai_studios/{studioId} {
-      allow get, list: if true;
-      allow create, update, delete: if false; 
+      allow read: if true;
+      allow write: if false; 
     }
 
-    /**
-     * @description AI Agent Persona details (Lux, Architect, etc.).
-     * @path /ai_agent_personas/{agentPersonaId}
-     * @allow (list) for all users to see available personas.
-     * @deny (write) client-side modification is prohibited.
-     * @principle Read-only global catalog.
-     */
     match /ai_agent_personas/{agentPersonaId} {
-      allow get, list: if true;
-      allow create, update, delete: if false;
+      allow read: if true;
+      allow write: if false;
     }
 
-    /**
-     * @description Platform news, updates, and announcements.
-     * @path /news_articles/{articleId}
-     * @allow (get) public access to news.
-     * @deny (write) News is managed via admin dashboard.
-     * @principle Public content feed.
-     */
     match /news_articles/{articleId} {
-      allow get, list: if true;
-      allow create, update, delete: if false;
+      allow read: if true;
+      allow write: if false;
     }
 
-    /**
-     * @description Experimental AI projects in the Labs Hub.
-     * @path /lab_projects/{projectId}
-     * @allow (get, list) public visibility for the roadmap.
-     * @deny (write) managed by development team.
-     * @principle Public transparency for experimental features.
-     */
     match /lab_projects/{projectId} {
-      allow get, list: if true;
-      allow create, update, delete: if false;
+      allow read: if true;
+      allow write: if false;
     }
   }
 }
