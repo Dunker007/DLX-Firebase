@@ -1,3 +1,4 @@
+
 "use client"
 
 import * as React from "react"
@@ -23,7 +24,8 @@ import {
   MoreVertical,
   History,
   FileVideo,
-  ExternalLink
+  ExternalLink,
+  Square
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"

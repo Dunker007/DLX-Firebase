@@ -9,18 +9,14 @@ import {
   RotateCw,
   Info,
   ChevronDown,
-  Circle
+  Circle,
+  Activity
 } from "lucide-react"
 import { 
   PieChart, 
   Pie, 
   Cell, 
-  ResponsiveContainer, 
-  LineChart, 
-  Line, 
-  XAxis, 
-  YAxis, 
-  Tooltip as RechartsTooltip 
+  ResponsiveContainer
 } from "recharts"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
@@ -36,16 +32,6 @@ const allocationData = [
   { name: 'HYPE', value: 8.0, color: '#f43f5e' },
 ]
 
-const equityData = [
-  { date: '1', value: 10000 },
-  { date: '2', value: 10500 },
-  { date: '3', value: 10300 },
-  { date: '4', value: 11200 },
-  { date: '5', value: 10800 },
-  { date: '6', value: 11500 },
-  { date: '7', value: 12100 },
-]
-
 const assetTactics = [
   { id: '1', name: 'USD', role: 'CASH RESERVE (USDC)', holdings: '4,505.33', basis: '$1.00', price: '$1.00', pnl: '+0.00', alloc: '32.20%', type: 'SAFETY NET', image: 'https://picsum.photos/seed/usdc/32/32' },
   { id: '2', name: 'ONDO', role: 'ONDO FINANCE', holdings: '7,953.54', basis: '$0.26', price: '$0.27', pnl: '+56.23', alloc: '15.40%', type: 'BALANCED ALT', image: 'https://picsum.photos/seed/ondo/32/32' },
@@ -57,7 +43,7 @@ const assetTactics = [
 
 export default function SmartFolioHub() {
   return (
-    <div className="p-8 space-y-10">
+    <div className="p-8 space-y-10 bg-[#0a0a0c] min-h-full">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="space-y-1">
@@ -153,17 +139,17 @@ export default function SmartFolioHub() {
           </div>
         </Card>
 
-        {/* Equity Curve */}
+        {/* Equity Curve Placeholder */}
         <Card className="lg:col-span-7 bg-[#0e0e11] border-white/5 p-6 rounded-3xl">
           <div className="flex items-center justify-between mb-8">
             <div className="flex items-center gap-2">
                <div className="w-2 h-2 rounded-full bg-white/20" />
                <h3 className="text-[10px] font-black uppercase tracking-widest">Equity Curve</h3>
             </div>
-            <span className="text-[10px] text-muted-foreground font-bold">Collecting data...</span>
+            <span className="text-[10px] text-muted-foreground font-bold">Snapshot Mode</span>
           </div>
 
-          <div className="h-64 w-full flex flex-col items-center justify-center">
+          <div className="h-64 w-full flex flex-col items-center justify-center border border-dashed border-white/5 rounded-2xl bg-white/[0.02]">
              <div className="w-12 h-12 rounded-xl bg-white/5 flex items-center justify-center mb-4">
                <Activity className="w-6 h-6 text-muted-foreground/20" />
              </div>
@@ -172,7 +158,7 @@ export default function SmartFolioHub() {
              </p>
              <div className="flex items-center gap-2 mt-6">
                 <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                <span className="text-[10px] font-bold text-green-500 uppercase tracking-widest">1 snapshot saved today</span>
+                <span className="text-[10px] font-bold text-green-500 uppercase tracking-widest">Live Monitoring Active</span>
              </div>
           </div>
         </Card>
