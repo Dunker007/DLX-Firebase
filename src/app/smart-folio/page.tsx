@@ -2,229 +2,284 @@
 "use client"
 
 import * as React from "react"
-import { PieChart, TrendingUp, ShieldAlert, CheckCircle2, ArrowRight, Loader2, DollarSign, Calendar, Target } from "lucide-react"
-import { smartFolioInsights, type SmartFolioInsightsInput, type SmartFolioInsightsOutput } from "@/ai/flows/smart-folio-insights"
+import { 
+  TrendingUp, 
+  TrendingDown, 
+  RefreshCcw, 
+  RotateCw,
+  Info,
+  ChevronDown,
+  Circle
+} from "lucide-react"
+import { 
+  PieChart, 
+  Pie, 
+  Cell, 
+  ResponsiveContainer, 
+  LineChart, 
+  Line, 
+  XAxis, 
+  YAxis, 
+  Tooltip as RechartsTooltip 
+} from "recharts"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
+import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 
-export default function SmartFolioPage() {
-  const [isLoading, setIsLoading] = React.useState(false)
-  const [report, setReport] = React.useState<SmartFolioInsightsOutput | null>(null)
+const allocationData = [
+  { name: 'USD', value: 32.2, color: '#3b82f6' },
+  { name: 'ONDO', value: 15.4, color: '#8b5cf6' },
+  { name: 'RENDER', value: 15.3, color: '#0ea5e9' },
+  { name: 'FET', value: 14.8, color: '#6366f1' },
+  { name: 'UNI', value: 14.3, color: '#d946ef' },
+  { name: 'HYPE', value: 8.0, color: '#f43f5e' },
+]
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    setIsLoading(true)
-    
-    const formData = new FormData(e.currentTarget)
-    const input: SmartFolioInsightsInput = {
-      currentPortfolioValue: Number(formData.get("portfolioValue")),
-      monthlyContribution: Number(formData.get("monthlyContribution")),
-      riskTolerance: formData.get("riskTolerance") as any,
-      investmentHorizonYears: Number(formData.get("horizon")),
-      investmentGoals: formData.get("goals") as string,
-      existingInvestmentsDescription: formData.get("holdings") as string,
-    }
+const equityData = [
+  { date: '1', value: 10000 },
+  { date: '2', value: 10500 },
+  { date: '3', value: 10300 },
+  { date: '4', value: 11200 },
+  { date: '5', value: 10800 },
+  { date: '6', value: 11500 },
+  { date: '7', value: 12100 },
+]
 
-    try {
-      const result = await smartFolioInsights(input)
-      setReport(result)
-    } catch (error) {
-      console.error("SmartFolio error:", error)
-    } finally {
-      setIsLoading(false)
-    }
-  }
+const assetTactics = [
+  { id: '1', name: 'USD', role: 'CASH RESERVE (USDC)', holdings: '4,505.33', basis: '$1.00', price: '$1.00', pnl: '+0.00', alloc: '32.20%', type: 'SAFETY NET', image: 'https://picsum.photos/seed/usdc/32/32' },
+  { id: '2', name: 'ONDO', role: 'ONDO FINANCE', holdings: '7,953.54', basis: '$0.26', price: '$0.27', pnl: '+56.23', alloc: '15.40%', type: 'BALANCED ALT', image: 'https://picsum.photos/seed/ondo/32/32' },
+  { id: '3', name: 'RENDER', role: 'RENDER NETWORK', holdings: '1,537.1', basis: '$1.25', price: '$1.39', pnl: '+205.12', alloc: '15.30%', type: 'BALANCED ALT', image: 'https://picsum.photos/seed/render/32/32' },
+  { id: '4', name: 'FET', role: 'FETCH.AI', holdings: '12,377.4', basis: '$0.17', price: '$0.17', pnl: '-20.26', alloc: '14.80%', type: 'BALANCED ALT', image: 'https://picsum.photos/seed/fet/32/32' },
+  { id: '5', name: 'UNI', role: 'UNISWAP', holdings: '588.69', basis: '$3.42', price: '$3.39', pnl: '-17.65', alloc: '14.30%', type: 'BALANCED ALT', image: 'https://picsum.photos/seed/uni/32/32' },
+  { id: '6', name: 'HYPE', role: 'HYPERLIQUID', holdings: '35.66', basis: '$31.29', price: '$31.30', pnl: '+0.50', alloc: '8.00%', type: 'BALANCED ALT', image: 'https://picsum.photos/seed/hype/32/32' },
+]
 
+export default function SmartFolioHub() {
   return (
-    <div className="max-w-7xl mx-auto py-4">
-      <div className="mb-10 text-center max-w-2xl mx-auto">
-        <div className="w-16 h-16 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center mx-auto mb-6">
-          <PieChart className="w-10 h-10 text-primary" />
+    <div className="p-8 space-y-10">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div className="space-y-1">
+          <div className="flex items-center gap-3">
+            <h1 className="font-headline text-3xl font-black tracking-tight uppercase">SmartFolio <span className="text-blue-500">v3.0</span></h1>
+            <Badge variant="outline" className="border-white/10 text-[10px] font-black tracking-tighter text-muted-foreground uppercase">
+              BRIDGE ONLINE | GEMINI 2.5 FLASH ACTIVE
+            </Badge>
+          </div>
         </div>
-        <h1 className="font-headline text-4xl font-black mb-3 tracking-tight">DLX SmartFolio</h1>
-        <p className="text-muted-foreground text-lg font-medium">Expert AI analysis for your investment portfolio and strategy.</p>
+        <div className="flex items-center gap-2 p-1 bg-white/5 rounded-xl border border-white/5">
+          <Button variant="ghost" size="sm" className="h-8 text-[10px] font-black uppercase rounded-lg">Anchor</Button>
+          <Button variant="default" size="sm" className="h-8 text-[10px] font-black uppercase rounded-lg bg-blue-600 shadow-lg shadow-blue-600/20">Tactician</Button>
+          <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg"><RotateCw className="w-4 h-4" /></Button>
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
-        {/* Input Form */}
-        <aside className="lg:col-span-5">
-          <Card className="border-white/5 bg-card/40 backdrop-blur-md sticky top-24">
-            <CardHeader>
-              <CardTitle className="font-headline text-xl">Portfolio Configuration</CardTitle>
-              <CardDescription className="font-medium text-muted-foreground">Provide your current financial context for analysis.</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label className="text-xs uppercase font-bold tracking-widest text-muted-foreground flex items-center gap-2">
-                      <DollarSign className="w-3 h-3" /> Total Value ($)
-                    </Label>
-                    <Input name="portfolioValue" type="number" defaultValue="10000" className="bg-background border-white/5" required />
-                  </div>
-                  <div className="space-y-2">
-                    <Label className="text-xs uppercase font-bold tracking-widest text-muted-foreground flex items-center gap-2">
-                      <Calendar className="w-3 h-3" /> Monthly Contrib.
-                    </Label>
-                    <Input name="monthlyContribution" type="number" defaultValue="500" className="bg-background border-white/5" required />
-                  </div>
+      {/* Ticker Tape */}
+      <div className="flex items-center gap-8 overflow-hidden bg-white/5 border-y border-white/5 py-3 -mx-8 px-8">
+        {[...Array(3)].map((_, i) => (
+          <div key={i} className="flex items-center gap-8 shrink-0 animate-marquee">
+            {allocationData.map((asset) => (
+              <div key={asset.name} className="flex items-center gap-3">
+                <span className="text-[10px] font-black text-muted-foreground">{asset.name}</span>
+                <span className="text-xs font-bold">$1.3900</span>
+                <div className="flex items-center gap-1 text-[10px] font-bold text-green-500">
+                  <TrendingUp className="w-3 h-3" />
+                  12.28%
                 </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label className="text-xs uppercase font-bold tracking-widest text-muted-foreground flex items-center gap-2">
-                      <ShieldAlert className="w-3 h-3" /> Risk Tolerance
-                    </Label>
-                    <Select name="riskTolerance" defaultValue="moderate">
-                      <SelectTrigger className="bg-background border-white/5">
-                        <SelectValue placeholder="Select" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="low">Conservative</SelectItem>
-                        <SelectItem value="moderate">Moderate</SelectItem>
-                        <SelectItem value="aggressive">Aggressive</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="space-y-2">
-                    <Label className="text-xs uppercase font-bold tracking-widest text-muted-foreground flex items-center gap-2">
-                      <TrendingUp className="w-3 h-3" /> Horizon (Years)
-                    </Label>
-                    <Input name="horizon" type="number" defaultValue="10" className="bg-background border-white/5" required />
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <Label className="text-xs uppercase font-bold tracking-widest text-muted-foreground flex items-center gap-2">
-                    <Target className="w-3 h-3" /> Investment Goals
-                  </Label>
-                  <Textarea name="goals" placeholder="e.g. Retirement in 20 years, Buying a home..." className="bg-background border-white/5 min-h-[100px]" required />
-                </div>
-
-                <div className="space-y-2">
-                  <Label className="text-xs uppercase font-bold tracking-widest text-muted-foreground">Existing Holdings (Optional)</Label>
-                  <Textarea name="holdings" placeholder="e.g. 50% S&P 500, 20% Tech Stocks, 30% Bonds" className="bg-background border-white/5 min-h-[80px]" />
-                </div>
-
-                <Button type="submit" className="w-full h-12 bg-primary hover:bg-primary/90 rounded-xl font-bold neon-glow" disabled={isLoading}>
-                  {isLoading ? <><Loader2 className="w-5 h-5 animate-spin mr-2" /> Generating Analysis...</> : "Run AI Insights"}
-                </Button>
-              </form>
-            </CardContent>
-          </Card>
-        </aside>
-
-        {/* Report View */}
-        <main className="lg:col-span-7 space-y-8">
-          {!report && !isLoading && (
-            <div className="h-full min-h-[400px] flex flex-col items-center justify-center text-center p-12 glass-panel rounded-3xl border-dashed border-white/10">
-              <div className="w-20 h-20 rounded-full bg-white/5 flex items-center justify-center mb-6">
-                <PieChart className="w-10 h-10 text-muted-foreground/30" />
               </div>
-              <h3 className="font-headline text-2xl font-bold mb-2">Awaiting Intelligence</h3>
-              <p className="text-muted-foreground font-medium max-w-sm">Complete your profile to the left to see your personalized AI financial report.</p>
-            </div>
-          )}
+            ))}
+          </div>
+        ))}
+      </div>
 
-          {isLoading && (
-            <div className="space-y-8 animate-pulse">
-              {[1, 2, 3].map(i => (
-                <div key={i} className="h-48 bg-white/5 rounded-3xl border border-white/5" />
+      {/* Main Charts Row */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        {/* Allocation Monitor */}
+        <Card className="lg:col-span-5 bg-[#0e0e11] border-white/5 p-6 rounded-3xl relative overflow-hidden group">
+          <div className="flex items-center justify-between mb-8">
+            <div className="flex items-center gap-2">
+               <div className="w-2 h-2 rounded-full bg-blue-500" />
+               <h3 className="text-[10px] font-black uppercase tracking-widest">Allocation Monitor</h3>
+            </div>
+            <div className="flex items-center gap-1 text-[10px] font-bold text-muted-foreground">
+              <span>80:20 Alts : Cash</span>
+            </div>
+          </div>
+
+          <div className="flex flex-col md:flex-row items-center gap-8">
+            <div className="w-48 h-48 relative shrink-0">
+               <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={allocationData}
+                    innerRadius={60}
+                    outerRadius={80}
+                    paddingAngle={5}
+                    dataKey="value"
+                  >
+                    {allocationData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} stroke="none" />
+                    ))}
+                  </Pie>
+                </PieChart>
+              </ResponsiveContainer>
+              <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
+                <span className="text-[10px] font-black text-muted-foreground uppercase tracking-tighter">Diversification</span>
+                <span className="text-2xl font-black">5 COINS</span>
+                <span className="text-[10px] font-bold text-blue-500 uppercase">Alt Positions</span>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4 flex-1 w-full">
+              {allocationData.map((asset) => (
+                <div key={asset.name} className="p-3 rounded-2xl bg-white/5 border border-white/5 hover:border-blue-500/30 transition-all">
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-[10px] font-black text-muted-foreground">{asset.name}</span>
+                    <span className="text-[10px] font-bold">{asset.value}%</span>
+                  </div>
+                  <div className="flex items-center gap-1 text-[10px] font-black text-green-500">
+                    <span>+$205.12</span>
+                  </div>
+                </div>
               ))}
             </div>
-          )}
+          </div>
 
-          {report && (
-            <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-500">
-              {/* Summary Card */}
-              <Card className="glass-panel border-primary/20 bg-primary/5">
-                <CardHeader>
-                  <Badge className="w-fit bg-primary mb-2 uppercase font-bold tracking-widest px-2 py-0.5 text-[10px]">Executive Summary</Badge>
-                  <CardTitle className="font-headline text-2xl font-black">Strategic Outlook</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-lg font-medium leading-relaxed">{report.summary}</p>
-                </CardContent>
-              </Card>
+          <div className="mt-8">
+            <Button variant="outline" className="w-full rounded-xl border-white/10 bg-white/5 h-10 text-[10px] font-black uppercase tracking-widest gap-2">
+              <RefreshCcw className="w-3 h-3 text-blue-500" /> Balanced Rotation Active
+            </Button>
+          </div>
+        </Card>
 
-              {/* Risk Analysis Card */}
-              <Card className="border-white/5 bg-card/40">
-                <CardHeader className="flex flex-row items-center justify-between">
-                  <div>
-                    <CardTitle className="font-headline text-xl">Risk Profile</CardTitle>
-                    <CardDescription className="font-medium text-muted-foreground">Level: <span className="text-accent font-bold">{report.riskAnalysis.level}</span></CardDescription>
-                  </div>
-                  <ShieldAlert className="w-8 h-8 text-accent" />
-                </CardHeader>
-                <CardContent>
-                  <p className="text-muted-foreground font-medium leading-relaxed">{report.riskAnalysis.detailedAnalysis}</p>
-                </CardContent>
-              </Card>
-
-              {/* Two Column Section */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <Card className="border-white/5 bg-card/40">
-                  <CardHeader>
-                    <CardTitle className="font-headline text-lg flex items-center gap-2">
-                      <TrendingUp className="w-5 h-5 text-primary" /> Strategy
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <ul className="space-y-3">
-                      {report.investmentStrategySuggestions.map((s, i) => (
-                        <li key={i} className="flex gap-2 text-sm font-medium text-muted-foreground">
-                          <span className="w-1.5 h-1.5 rounded-full bg-primary mt-1.5 shrink-0" />
-                          {s}
-                        </li>
-                      ))}
-                    </ul>
-                  </CardContent>
-                </Card>
-
-                <Card className="border-white/5 bg-card/40">
-                  <CardHeader>
-                    <CardTitle className="font-headline text-lg flex items-center gap-2">
-                      <Sparkles className="w-5 h-5 text-accent" /> Diversification
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <ul className="space-y-3">
-                      {report.diversificationRecommendations.map((d, i) => (
-                        <li key={i} className="flex gap-2 text-sm font-medium text-muted-foreground">
-                          <CheckCircle2 className="w-4 h-4 text-accent shrink-0 mt-0.5" />
-                          {d}
-                        </li>
-                      ))}
-                    </ul>
-                  </CardContent>
-                </Card>
-              </div>
-
-              {/* Next Steps */}
-              <div className="bg-accent/10 border border-accent/20 p-8 rounded-3xl">
-                <h3 className="font-headline text-2xl font-black mb-6 tracking-tight flex items-center gap-3">
-                  <ArrowRight className="w-6 h-6 text-accent" /> Actionable Next Steps
-                </h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {report.nextSteps.map((step, i) => (
-                    <div key={i} className="bg-background/40 border border-white/5 p-4 rounded-xl flex items-center gap-4 group hover:border-accent/40 transition-colors">
-                      <div className="w-8 h-8 rounded-lg bg-accent/20 flex items-center justify-center font-black text-accent text-sm group-hover:bg-accent group-hover:text-white transition-colors">
-                        {i + 1}
-                      </div>
-                      <span className="text-sm font-bold">{step}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
+        {/* Equity Curve */}
+        <Card className="lg:col-span-7 bg-[#0e0e11] border-white/5 p-6 rounded-3xl">
+          <div className="flex items-center justify-between mb-8">
+            <div className="flex items-center gap-2">
+               <div className="w-2 h-2 rounded-full bg-white/20" />
+               <h3 className="text-[10px] font-black uppercase tracking-widest">Equity Curve</h3>
             </div>
-          )}
-        </main>
+            <span className="text-[10px] text-muted-foreground font-bold">Collecting data...</span>
+          </div>
+
+          <div className="h-64 w-full flex flex-col items-center justify-center">
+             <div className="w-12 h-12 rounded-xl bg-white/5 flex items-center justify-center mb-4">
+               <Activity className="w-6 h-6 text-muted-foreground/20" />
+             </div>
+             <p className="text-xs text-muted-foreground/50 font-medium max-w-[240px] text-center leading-relaxed">
+               Equity curve will appear after 2+ daily snapshots. Snapshots are saved automatically when prices sync.
+             </p>
+             <div className="flex items-center gap-2 mt-6">
+                <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                <span className="text-[10px] font-bold text-green-500 uppercase tracking-widest">1 snapshot saved today</span>
+             </div>
+          </div>
+        </Card>
       </div>
+
+      {/* Asset Tactics Table */}
+      <div className="space-y-4">
+        <div className="flex items-center justify-between px-2">
+           <div className="flex items-center gap-2">
+             <div className="w-2 h-2 rounded-full bg-blue-500" />
+             <h3 className="text-[10px] font-black uppercase tracking-widest">Altcoin Tactics</h3>
+           </div>
+           <div className="flex items-center gap-6">
+             <div className="text-center">
+               <p className="text-[10px] text-muted-foreground uppercase font-black tracking-tighter mb-0.5">Pos</p>
+               <p className="text-xs font-black">15</p>
+             </div>
+             <div className="text-center">
+               <p className="text-[10px] text-muted-foreground uppercase font-black tracking-tighter mb-0.5">Sentiment</p>
+               <p className="text-xs font-black">26 <span className="text-[10px] text-muted-foreground">/ 100</span></p>
+             </div>
+             <Badge variant="outline" className="border-blue-500/30 text-blue-500 font-black text-[10px] rounded-full px-3 py-1 bg-blue-500/10">
+               6 Active Positions
+             </Badge>
+           </div>
+        </div>
+
+        <Card className="bg-[#0e0e11] border-white/5 rounded-3xl overflow-hidden">
+          <Table>
+            <TableHeader className="bg-white/5 border-b border-white/5">
+              <TableRow className="border-none hover:bg-transparent">
+                <TableHead className="text-[10px] font-black text-muted-foreground uppercase h-12">Asset / Role</TableHead>
+                <TableHead className="text-[10px] font-black text-muted-foreground uppercase h-12">Holdings</TableHead>
+                <TableHead className="text-[10px] font-black text-muted-foreground uppercase h-12">Basis</TableHead>
+                <TableHead className="text-[10px] font-black text-muted-foreground uppercase h-12">Price</TableHead>
+                <TableHead className="text-[10px] font-black text-muted-foreground uppercase h-12">PNL</TableHead>
+                <TableHead className="text-[10px] font-black text-muted-foreground uppercase h-12 text-right">Alloc vs Target</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {assetTactics.map((asset) => (
+                <TableRow key={asset.id} className="border-white/5 hover:bg-white/5 transition-colors group">
+                  <TableCell className="py-4">
+                    <div className="flex items-center gap-4">
+                      <div className="w-10 h-10 rounded-xl bg-white/5 border border-white/5 overflow-hidden p-1.5 flex items-center justify-center shrink-0">
+                        <img src={asset.image} alt={asset.name} className="w-full h-full object-contain" />
+                      </div>
+                      <div className="space-y-0.5">
+                        <div className="flex items-center gap-2">
+                          <span className="font-black text-sm">{asset.name}</span>
+                          <Badge variant="outline" className="text-[8px] font-black bg-blue-500/10 text-blue-500 border-none px-1.5 h-4">
+                            {asset.type}
+                          </Badge>
+                        </div>
+                        <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-tight">{asset.role}</p>
+                      </div>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div className="space-y-0.5">
+                      <p className="text-xs font-black">{asset.holdings}</p>
+                      <p className="text-[10px] font-bold text-muted-foreground">$2,148.42</p>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div className="space-y-0.5">
+                      <p className="text-xs font-black">{asset.basis}</p>
+                      <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-tighter">Avg</p>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div className="space-y-0.5">
+                      <p className="text-xs font-black text-blue-500">{asset.price}</p>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div className={`text-xs font-black ${asset.pnl.startsWith('+') ? 'text-green-500' : asset.pnl.startsWith('-') ? 'text-rose-500' : ''}`}>
+                      {asset.pnl}
+                    </div>
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <div className="flex flex-col items-end gap-1.5">
+                      <div className="flex items-center gap-2">
+                         <span className="text-[10px] font-black uppercase text-muted-foreground">Target</span>
+                         <span className="text-xs font-black">{asset.alloc}</span>
+                      </div>
+                      <div className="h-1 w-24 bg-white/5 rounded-full overflow-hidden">
+                        <div className="h-full bg-blue-500" style={{ width: asset.alloc }} />
+                      </div>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </Card>
+      </div>
+
+      <style jsx global>{`
+        @keyframes marquee {
+          0% { transform: translateX(0); }
+          100% { transform: translateX(-100%); }
+        }
+        .animate-marquee {
+          animation: marquee 30s linear infinite;
+        }
+      `}</style>
     </div>
   )
 }
