@@ -1,9 +1,25 @@
+
+"use client"
+
+import * as React from "react"
 import Image from 'next/image';
 import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Sparkles, PieChart, Music, FileText, Zap, ChevronRight, Video, BarChart3, Palette } from 'lucide-react';
+import { 
+  Sparkles, 
+  Music, 
+  FileText, 
+  Zap, 
+  ChevronRight, 
+  Video, 
+  BarChart3, 
+  Activity,
+  History,
+  MessageSquare,
+  Globe
+} from 'lucide-react';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 
 const featuredStudios = [
@@ -39,6 +55,13 @@ const featuredStudios = [
   }
 ];
 
+const neuralLogs = [
+  { time: "14:42:01", type: "STUDIO", msg: "VisionaryAI: New branding asset synthesized (4K PNG)", color: "text-orange-500" },
+  { time: "14:38:15", type: "TACTICAL", msg: "SmartFolio: Risk alert triggered on RENDER volatility", color: "text-blue-500" },
+  { time: "14:30:00", type: "SYSTEM", msg: "Nexus: Neural bridge latency stabilized at 12ms", color: "text-emerald-500" },
+  { time: "14:12:44", type: "MEETING", msg: "Meeting Studio: AI Participant 'Lux' generated Q2 Brief", color: "text-rose-500" },
+];
+
 export default function DashboardPage() {
   return (
     <div className="max-w-7xl mx-auto space-y-12">
@@ -56,103 +79,119 @@ export default function DashboardPage() {
         <span className="text-[10px] text-muted-foreground font-black uppercase tracking-[0.2em] px-4">LuxAI Enterprise Environment</span>
       </section>
 
-      <section>
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
-          <div>
-            <h2 className="font-headline text-4xl font-black mb-2 tracking-tight uppercase">Featured Studios</h2>
-            <p className="text-muted-foreground font-medium text-lg max-w-2xl leading-relaxed">Specialized intelligence environments optimized for high-performance financial and creative workflows.</p>
-          </div>
-          <div className="flex gap-2">
-            <Button variant="secondary" className="rounded-xl h-12 px-6 font-black uppercase text-xs" asChild>
-              <Link href="/studios">Open All Hubs</Link>
-            </Button>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {featuredStudios.map((studio) => (
-            <Card key={studio.id} className="group overflow-hidden border-white/5 bg-[#0a0a0c] hover:bg-card/60 transition-all duration-500 relative rounded-3xl">
-              <div className="aspect-video relative overflow-hidden">
-                <Image 
-                  src={studio.image || ''} 
-                  alt={studio.title}
-                  fill
-                  className="object-cover transition-transform duration-700 group-hover:scale-105 opacity-60 group-hover:opacity-100"
-                  data-ai-hint="abstract technology"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0c] via-[#0a0a0c]/40 to-transparent" />
-                <Badge 
-                  className={`absolute top-4 right-4 rounded-full px-3 py-1 text-[10px] font-black tracking-widest ${
-                    studio.status === 'Live' ? 'bg-primary shadow-[0_0_15px_rgba(var(--primary),0.5)]' : 
-                    studio.status === 'Beta' ? 'bg-accent' : 'bg-muted text-muted-foreground'
-                  }`}
-                >
-                  {studio.status}
-                </Badge>
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        {/* Main Content Area */}
+        <div className="lg:col-span-8 space-y-12">
+          <section>
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
+              <div>
+                <h2 className="font-headline text-4xl font-black mb-2 tracking-tight uppercase">Featured Studios</h2>
+                <p className="text-muted-foreground font-medium text-lg leading-relaxed">Specialized intelligence environments optimized for high-performance workflows.</p>
               </div>
-              <CardHeader className="relative -mt-12 pt-0 pb-2">
-                <div className="w-14 h-14 rounded-2xl bg-[#0a0a0c] border border-white/10 flex items-center justify-center mb-4 shadow-2xl group-hover:border-primary/40 transition-colors">
-                  <studio.icon className="w-7 h-7" style={{ color: studio.color }} />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              {featuredStudios.slice(0, 2).map((studio) => (
+                <Card key={studio.id} className="group overflow-hidden border-white/5 bg-[#0a0a0c] hover:bg-card/60 transition-all duration-500 relative rounded-3xl">
+                  <div className="aspect-video relative overflow-hidden">
+                    <Image 
+                      src={studio.image || ''} 
+                      alt={studio.title}
+                      fill
+                      className="object-cover transition-transform duration-700 group-hover:scale-105 opacity-60 group-hover:opacity-100"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0c] via-[#0a0a0c]/40 to-transparent" />
+                    <Badge className="absolute top-4 right-4 rounded-full px-3 py-1 text-[10px] font-black tracking-widest bg-primary shadow-[0_0_15px_rgba(var(--primary),0.5)]">
+                      {studio.status}
+                    </Badge>
+                  </div>
+                  <CardHeader className="relative -mt-12 pt-0 pb-2">
+                    <div className="w-14 h-14 rounded-2xl bg-[#0a0a0c] border border-white/10 flex items-center justify-center mb-4 shadow-2xl group-hover:border-primary/40 transition-colors">
+                      <studio.icon className="w-7 h-7" style={{ color: studio.color }} />
+                    </div>
+                    <CardTitle className="font-headline text-2xl font-black tracking-tight uppercase">{studio.title}</CardTitle>
+                  </CardHeader>
+                  <CardContent className="pb-4">
+                    <p className="text-muted-foreground font-medium text-sm leading-relaxed">{studio.description}</p>
+                  </CardContent>
+                  <CardFooter className="pt-0">
+                    <Button asChild variant="default" className="w-full group/btn rounded-xl h-12 bg-white/5 hover:bg-primary border border-white/10 transition-all duration-300">
+                      <Link href={studio.href} className="flex items-center justify-center gap-2 font-black uppercase text-[10px] tracking-widest">
+                        Enter Environment
+                        <ChevronRight className="w-4 h-4 transition-transform group-hover/btn:translate-x-1" />
+                      </Link>
+                    </Button>
+                  </CardFooter>
+                </Card>
+              ))}
+            </div>
+          </section>
+
+          <section className="bg-[#0a0a0c] border border-white/5 p-12 rounded-[2.5rem] relative overflow-hidden group">
+            <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/5 blur-[120px] rounded-full pointer-events-none" />
+            <div className="flex flex-col md:flex-row items-center gap-12 relative z-10">
+              <div className="flex-1 space-y-6">
+                <div className="flex items-center gap-3">
+                  <div className="w-2 h-2 rounded-full bg-accent animate-pulse" />
+                  <span className="text-[10px] font-black uppercase tracking-[0.3em] text-accent">Active Collaboration</span>
                 </div>
-                <CardTitle className="font-headline text-2xl font-black tracking-tight uppercase">{studio.title}</CardTitle>
-              </CardHeader>
-              <CardContent className="pb-4">
-                <p className="text-muted-foreground font-medium text-sm leading-relaxed">{studio.description}</p>
-              </CardContent>
-              <CardFooter className="pt-0">
-                <Button 
-                  asChild 
-                  variant="default"
-                  className="w-full group/btn rounded-xl h-12 bg-white/5 hover:bg-primary border border-white/10 transition-all duration-300"
-                >
-                  <Link href={studio.href} className="flex items-center justify-center gap-2 font-black uppercase text-[10px] tracking-widest">
-                    Enter Environment
-                    <ChevronRight className="w-4 h-4 transition-transform group-hover/btn:translate-x-1" />
-                  </Link>
-                </Button>
-              </CardFooter>
-            </Card>
-          ))}
-        </div>
-      </section>
-
-      <section className="bg-[#0a0a0c] border border-white/5 p-12 rounded-[2.5rem] relative overflow-hidden group">
-        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/5 blur-[120px] rounded-full pointer-events-none" />
-        <div className="absolute bottom-0 left-0 w-[300px] h-[300px] bg-accent/5 blur-[100px] rounded-full pointer-events-none" />
-        
-        <div className="flex flex-col md:flex-row items-center gap-12 relative z-10">
-          <div className="flex-1 space-y-6">
-            <div className="flex items-center gap-3">
-              <div className="w-2 h-2 rounded-full bg-accent animate-pulse" />
-              <span className="text-[10px] font-black uppercase tracking-[0.3em] text-accent">Intelligent Collaboration</span>
-            </div>
-            <h3 className="font-headline text-4xl md:text-5xl font-black tracking-tighter uppercase leading-tight">Augment your workflow with <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">Neural Personas.</span></h3>
-            <p className="text-muted-foreground text-lg font-medium leading-relaxed max-w-xl">
-              Our specialized agents don't just chat—they architect systems, debug complex builds, and manage enterprise hospitality. Select a persona and start your session.
-            </p>
-            <div className="flex flex-wrap gap-4 pt-4">
-              <Button size="lg" asChild className="rounded-2xl bg-primary hover:bg-primary/90 h-14 px-8 font-black uppercase text-xs tracking-widest shadow-xl shadow-primary/20">
-                <Link href="/chat">Launch Agent Chat</Link>
-              </Button>
-              <Button size="lg" variant="outline" asChild className="rounded-2xl border-white/10 h-14 px-8 font-black uppercase text-xs tracking-widest bg-white/5 hover:bg-white/10 transition-all">
-                <Link href="/agents">Agent Hub</Link>
-              </Button>
-            </div>
-          </div>
-          <div className="flex -space-x-8 lg:-space-x-12">
-            {[1, 2, 3].map((i) => (
-              <div key={i} className="w-24 h-24 lg:w-32 lg:h-32 rounded-[2rem] border-4 border-[#0a0a0c] overflow-hidden relative shadow-2xl transition-transform hover:scale-110 hover:z-20 cursor-pointer">
-                <Image 
-                  src={`https://picsum.photos/seed/agent-persona-${i}/300/300`} 
-                  alt={`Agent ${i}`}
-                  fill
-                  className="object-cover grayscale hover:grayscale-0 transition-all duration-500"
-                />
+                <h3 className="font-headline text-4xl font-black tracking-tighter uppercase leading-tight">Neural <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">Meetings.</span></h3>
+                <p className="text-muted-foreground text-lg font-medium leading-relaxed max-w-xl">
+                  Our specialized agents don't just chat—they join your calls, draft live reports, and handle enterprise tasks in real-time.
+                </p>
+                <div className="flex flex-wrap gap-4 pt-4">
+                  <Button size="lg" asChild className="rounded-2xl bg-primary hover:bg-primary/90 h-14 px-8 font-black uppercase text-xs tracking-widest shadow-xl shadow-primary/20">
+                    <Link href="/dashboard/meeting">Enter Meeting Room</Link>
+                  </Button>
+                </div>
               </div>
-            ))}
-          </div>
+            </div>
+          </section>
         </div>
-      </section>
+
+        {/* Sidebar Activity Area */}
+        <aside className="lg:col-span-4 space-y-8">
+           <Card className="bg-[#0a0a0c] border-white/5 p-6 rounded-3xl h-full flex flex-col">
+              <div className="flex items-center justify-between mb-8">
+                 <div className="flex items-center gap-2">
+                    <Activity className="w-4 h-4 text-primary" />
+                    <h3 className="text-[10px] font-black uppercase tracking-widest">Neural Activity</h3>
+                 </div>
+                 <Badge variant="outline" className="border-white/5 text-[8px] font-black opacity-40">REAL-TIME</Badge>
+              </div>
+              
+              <div className="flex-1 space-y-6">
+                 {neuralLogs.map((log, i) => (
+                   <div key={i} className="space-y-2 group cursor-pointer">
+                      <div className="flex items-center justify-between">
+                         <span className="text-[8px] font-black text-muted-foreground uppercase tracking-widest">{log.time}</span>
+                         <span className={`text-[8px] font-black uppercase ${log.color}`}>{log.type}</span>
+                      </div>
+                      <p className="text-[10px] font-medium text-white/70 group-hover:text-white transition-colors leading-relaxed">
+                        {log.msg}
+                      </p>
+                   </div>
+                 ))}
+              </div>
+
+              <div className="pt-8 mt-8 border-t border-white/5">
+                 <div className="flex items-center gap-3 mb-6">
+                    <div className="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20">
+                       <Globe className="w-4 h-4 text-emerald-500" />
+                    </div>
+                    <div>
+                       <h4 className="text-[10px] font-black uppercase tracking-tight leading-none">Global Sync</h4>
+                       <p className="text-[8px] text-muted-foreground font-black uppercase mt-1">Matrix v4.2.0</p>
+                    </div>
+                 </div>
+                 <div className="grid grid-cols-2 gap-2">
+                    <Button variant="outline" size="sm" className="h-8 border-white/5 bg-white/5 text-[8px] font-black uppercase">Archive</Button>
+                    <Button variant="outline" size="sm" className="h-8 border-white/5 bg-white/5 text-[8px] font-black uppercase">Settings</Button>
+                 </div>
+              </div>
+           </Card>
+        </aside>
+      </div>
     </div>
   );
 }

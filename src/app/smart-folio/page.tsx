@@ -10,7 +10,10 @@ import {
   Info,
   ChevronDown,
   Circle,
-  Activity
+  Activity,
+  Sparkles,
+  Loader2,
+  ChevronRight
 } from "lucide-react"
 import { 
   PieChart, 
@@ -22,6 +25,7 @@ import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { smartFolioInsights, type SmartFolioInsightsOutput } from "@/ai/flows/smart-folio-insights"
 
 const allocationData = [
   { name: 'USD', value: 32.2, color: '#3b82f6' },
@@ -42,6 +46,28 @@ const assetTactics = [
 ]
 
 export default function SmartFolioHub() {
+  const [isAnalyzing, setIsAnalyzing] = React.useState(false)
+  const [aiReport, setAiReport] = React.useState<SmartFolioInsightsOutput | null>(null)
+
+  const handleAiAnalysis = async () => {
+    setIsAnalyzing(true)
+    try {
+      const result = await smartFolioInsights({
+        currentPortfolioValue: 17582.96,
+        monthlyContribution: 1500,
+        riskTolerance: 'aggressive',
+        investmentHorizonYears: 10,
+        investmentGoals: 'Maximize growth through AI and decentralized compute tokens.',
+        existingInvestmentsDescription: 'USD, ONDO, RENDER, FET, UNI, HYPE'
+      })
+      setAiReport(result)
+    } catch (error) {
+      console.error("Analysis failed:", error)
+    } finally {
+      setIsAnalyzing(false)
+    }
+  }
+
   return (
     <div className="p-8 space-y-10 bg-[#0a0a0c] min-h-full">
       {/* Header */}
@@ -56,7 +82,15 @@ export default function SmartFolioHub() {
         </div>
         <div className="flex items-center gap-2 p-1 bg-white/5 rounded-xl border border-white/5">
           <Button variant="ghost" size="sm" className="h-8 text-[10px] font-black uppercase rounded-lg">Anchor</Button>
-          <Button variant="default" size="sm" className="h-8 text-[10px] font-black uppercase rounded-lg bg-blue-600 shadow-lg shadow-blue-600/20">Tactician</Button>
+          <Button 
+            onClick={handleAiAnalysis}
+            disabled={isAnalyzing}
+            variant="default" 
+            className="h-8 text-[10px] font-black uppercase rounded-lg bg-blue-600 shadow-lg shadow-blue-600/20 gap-2"
+          >
+            {isAnalyzing ? <Loader2 className="w-3 h-3 animate-spin" /> : <Sparkles className="w-3 h-3" />}
+            {aiReport ? "Refresh Tactics" : "Run Tactician"}
+          </Button>
           <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg"><RotateCw className="w-4 h-4" /></Button>
         </div>
       </div>
@@ -78,6 +112,54 @@ export default function SmartFolioHub() {
           </div>
         ))}
       </div>
+
+      {/* AI Insights Panel (Conditionally Rendered) */}
+      {aiReport && (
+        <Card className="bg-blue-600/5 border-blue-500/20 p-8 rounded-3xl animate-in fade-in slide-in-from-top-4 duration-500">
+          <div className="flex items-center gap-3 mb-6">
+             <Sparkles className="w-6 h-6 text-blue-500" />
+             <div>
+               <h3 className="text-lg font-black uppercase tracking-tight">Tactical AI Analysis</h3>
+               <p className="text-[10px] text-muted-foreground font-black uppercase tracking-widest">Confidence Index: 98.4%</p>
+             </div>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+             <div className="space-y-6">
+                <div>
+                  <label className="text-[10px] font-black uppercase text-blue-400 tracking-widest mb-2 block">Executive Summary</label>
+                  <p className="text-sm font-medium leading-relaxed text-white/80">{aiReport.summary}</p>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                   <div className="p-4 rounded-2xl bg-black/40 border border-white/5">
+                      <p className="text-[9px] font-black text-muted-foreground uppercase mb-1">Risk Level</p>
+                      <p className="text-sm font-black text-rose-500 uppercase">{aiReport.riskAnalysis.level}</p>
+                   </div>
+                   <div className="p-4 rounded-2xl bg-black/40 border border-white/5">
+                      <p className="text-[9px] font-black text-muted-foreground uppercase mb-1">Horizon</p>
+                      <p className="text-sm font-black text-blue-400 uppercase">10 YEARS</p>
+                   </div>
+                </div>
+             </div>
+             <div className="space-y-6">
+                <div>
+                   <label className="text-[10px] font-black uppercase text-blue-400 tracking-widest mb-2 block">Neural Recommendations</label>
+                   <div className="space-y-2">
+                      {aiReport.nextSteps.slice(0, 3).map((step, i) => (
+                        <div key={i} className="flex items-center justify-between p-3 rounded-xl bg-white/5 border border-white/5 group hover:border-blue-500/30 transition-all cursor-pointer">
+                           <span className="text-[10px] font-bold text-muted-foreground uppercase">{step}</span>
+                           <ChevronRight className="w-3.5 h-3.5 text-blue-500/50 group-hover:text-blue-500" />
+                        </div>
+                      ))}
+                   </div>
+                </div>
+                <div className="flex gap-2">
+                   <Button variant="outline" className="flex-1 h-10 border-white/10 text-[9px] font-black uppercase">Export PDF</Button>
+                   <Button className="flex-1 h-10 bg-blue-600 hover:bg-blue-700 text-[9px] font-black uppercase">Execute Rebalance</Button>
+                </div>
+             </div>
+          </div>
+        </Card>
+      )}
 
       {/* Main Charts Row */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
