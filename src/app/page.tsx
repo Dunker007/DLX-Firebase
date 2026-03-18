@@ -10,7 +10,7 @@ export default function Home() {
           <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center neon-glow">
             <Sparkles className="w-6 h-6 text-white" />
           </div>
-          <span className="font-headline font-bold text-2xl tracking-tighter">LuxAI</span>
+          <span className="font-headline font-bold text-2xl tracking-tighter uppercase">DLX Nexus</span>
         </div>
         <div className="flex items-center gap-6">
           <Link href="/login" className="text-sm font-medium hover:text-primary transition-colors">Sign In</Link>
@@ -23,15 +23,16 @@ export default function Home() {
       <main className="flex-1 flex flex-col items-center justify-center px-4 py-20 text-center max-w-6xl mx-auto">
         <div className="mb-6 inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-primary/30 bg-primary/10 text-primary text-xs font-bold uppercase tracking-widest animate-in fade-in slide-in-from-bottom-2 duration-700">
           <Zap className="w-3 h-3" />
-          Beta v0.1.0 Online
+          Neural OS Beta Online
         </div>
-        <h1 className="font-headline text-6xl md:text-8xl font-black mb-8 tracking-tighter leading-[0.9] text-white uppercase">
-          Neural OS for <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">AI Studios.</span>
+        <h1 className="font-headline text-6xl md:text-8xl font-black mb-8 tracking-tighter leading-[0.9] text-white uppercase text-left w-full">
+          Grounded <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">Intelligence.</span><br />
+          The DLX <span className="text-white/40">Protocol.</span>
         </h1>
-        <p className="text-xl text-muted-foreground max-w-2xl mb-12 font-medium leading-relaxed">
-          The unified platform for specialized intelligence. Orchestrate storyboards, financial tactics, and neural content generation with grounded AI agents.
+        <p className="text-xl text-muted-foreground max-w-2xl mb-12 font-medium leading-relaxed text-left w-full">
+          Orchestrate specialized AI personas across political, financial, and creative domains. A unified interface for the DLX thinking partnership.
         </p>
-        <div className="flex flex-col sm:flex-row gap-4 mb-24">
+        <div className="flex flex-col sm:flex-row gap-4 mb-24 w-full">
           <Button size="lg" className="rounded-full px-8 h-14 text-lg bg-primary hover:bg-primary/90 neon-glow" asChild>
             <Link href="/dashboard" className="flex items-center gap-2 uppercase font-black tracking-widest">
               Establish Link <ArrowRight className="w-5 h-5" />
@@ -44,9 +45,9 @@ export default function Home() {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full">
           {[
-            { icon: ShieldCheck, title: "Neural Encryption", desc: "Enterprise-grade data isolation for sensitive portfolio and chat intelligence." },
-            { icon: Globe, title: "Multi-Agent Matrix", desc: "Specialized personas (Lux, Architect, Dev) grounded in real-time platform signals." },
-            { icon: Sparkles, title: "Studio Synthesis", desc: "Advanced GenAI pipelines for high-fidelity video, audio, and technical content." }
+            { icon: ShieldCheck, title: "Secure Orchestration", desc: "Enterprise-grade isolation for financial portfolios and tactical chat intelligence." },
+            { icon: Globe, title: "DLX Roster", desc: "Specialized personas (Lux, QPL, Alto) grounded in your specific data signals." },
+            { icon: Sparkles, title: "Studio Synthesis", desc: "Next-generation GenAI pipelines for high-fidelity creative content production." }
           ].map((feature, i) => (
             <div key={i} className="glass-panel p-8 rounded-2xl text-left hover:border-primary/40 transition-all group">
               <feature.icon className="w-10 h-10 text-primary mb-6 group-hover:scale-110 transition-transform" />
@@ -62,7 +63,7 @@ export default function Home() {
           <div className="w-6 h-6 rounded bg-primary/20 flex items-center justify-center">
             <Sparkles className="w-3 h-3 text-primary" />
           </div>
-          <span>&copy; 2024 LuxAI Neural OS. Terminal v0.1.0</span>
+          <span>&copy; 2024 DLX Nexus Neural OS.</span>
         </div>
         <div className="flex items-center gap-8">
           <Link href="#" className="hover:text-primary transition-colors">Neural Terms</Link>
