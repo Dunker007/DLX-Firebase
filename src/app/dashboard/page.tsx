@@ -16,8 +16,7 @@ import {
   Video, 
   BarChart3, 
   Activity,
-  Globe,
-  AlertCircle
+  Globe
 } from 'lucide-react';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 
@@ -84,7 +83,6 @@ export default function DashboardPage() {
       </section>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-        {/* Main Content Area */}
         <div className="lg:col-span-8 space-y-12">
           <section>
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
@@ -153,7 +151,6 @@ export default function DashboardPage() {
           </section>
         </div>
 
-        {/* Sidebar Activity Area */}
         <aside className="lg:col-span-4 space-y-8">
            <Card className="bg-[#0a0a0c] border-white/5 p-6 rounded-3xl h-full flex flex-col">
               <div className="flex items-center justify-between mb-8">

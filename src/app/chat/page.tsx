@@ -14,6 +14,7 @@ import { Badge } from "@/components/ui/badge"
 import { useFirestore, useUser, useCollection, useMemoFirebase } from "@/firebase"
 import { collection, query, orderBy, serverTimestamp, limit } from "firebase/firestore"
 import { addDocumentNonBlocking } from "@/firebase/non-blocking-updates"
+import Link from "next/link"
 
 const personas = [
   { name: "Lux", role: "Hospitality & Guidance", desc: "Elegant and helpful assistant for platform queries.", icon: Sparkles, color: "text-primary" },
@@ -65,12 +66,13 @@ function ChatContent() {
     const messagesRef = collection(db, 'users', user.uid, 'ai_conversations', selectedPersona, 'messages');
     addDocumentNonBlocking(messagesRef, userMessage);
     
+    const currentInput = input;
     setInput("")
     setIsLoading(true)
 
     try {
       const result = await chatWithAIAgentPersona({
-        message: input,
+        message: currentInput,
         personaName: selectedPersona,
       })
 
@@ -83,7 +85,7 @@ function ChatContent() {
 
       addDocumentNonBlocking(messagesRef, assistantMessage);
     } catch (error) {
-      // Error handled centrally by FirebaseErrorListener
+      console.error("Chat failed:", error);
     } finally {
       setIsLoading(false)
     }
