@@ -1,4 +1,3 @@
-
 "use client"
 
 import * as React from "react"
@@ -6,17 +5,11 @@ import DashboardLayout from "../../dashboard/layout"
 import { 
   FileText, 
   Sparkles, 
-  Send, 
-  Settings2, 
   BarChart, 
   Globe, 
-  Layout, 
-  Languages, 
   CheckCircle,
-  Clock,
-  ChevronRight,
   Zap,
-  PenTool
+  Loader2
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
@@ -24,9 +17,34 @@ import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { generateBlogContent, type BlogContentOutput } from "@/ai/flows/blog-content-flow"
 
 export default function BlogStudioPage() {
   const [isGenerating, setIsGenerating] = React.useState(false)
+  const [prompt, setPrompt] = React.useState("")
+  const [tone, setTone] = React.useState<'technical' | 'professional' | 'creative' | 'minimal'>("technical")
+  const [target, setTarget] = React.useState<'twitter' | 'medium' | 'newsletter' | 'whitepaper'>("medium")
+  
+  const [title, setTitle] = React.useState("")
+  const [content, setContent] = React.useState("")
+  const [keywords, setKeywords] = React.useState<string[]>([])
+  const [stats, setStats] = React.useState({ wordCount: 0, readingTime: 0 })
+
+  const handleGenerate = async () => {
+    if (!prompt.trim()) return
+    setIsGenerating(true)
+    try {
+      const result = await generateBlogContent({ prompt, tone, target })
+      setTitle(result.title)
+      setContent(result.content)
+      setKeywords(result.seoKeywords)
+      setStats({ wordCount: result.wordCount, readingTime: result.readingTime })
+    } catch (error) {
+      console.error("Failed to generate content:", error)
+    } finally {
+      setIsGenerating(false)
+    }
+  }
 
   return (
     <DashboardLayout>
@@ -55,26 +73,28 @@ export default function BlogStudioPage() {
         </header>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-          {/* Editor Area */}
           <div className="lg:col-span-8 space-y-6">
             <Card className="bg-[#0c0c0e] border-white/5 rounded-3xl p-10 min-h-[600px] flex flex-col relative">
               <Input 
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
                 placeholder="Article Headline..." 
                 className="bg-transparent border-none text-4xl font-black p-0 h-auto focus-visible:ring-0 placeholder:text-white/10 mb-8"
               />
               <Textarea 
+                value={content}
+                onChange={(e) => setContent(e.target.value)}
                 placeholder="Start architectural drafting or use the generator on the right..." 
                 className="flex-1 bg-transparent border-none text-lg font-medium p-0 focus-visible:ring-0 placeholder:text-white/5 resize-none leading-relaxed"
               />
               <div className="absolute bottom-6 right-6 flex items-center gap-4 text-[10px] font-black uppercase text-muted-foreground">
-                <span>0 Words</span>
+                <span>{stats.wordCount} Words</span>
                 <span className="w-px h-3 bg-white/10" />
-                <span>Reading time: 0 min</span>
+                <span>Reading time: {stats.readingTime} min</span>
               </div>
             </Card>
           </div>
 
-          {/* Controls Sidebar */}
           <div className="lg:col-span-4 space-y-6">
             <Card className="bg-white/5 border-white/5 p-8 rounded-3xl space-y-8">
               <div>
@@ -86,6 +106,8 @@ export default function BlogStudioPage() {
                   <div className="space-y-2">
                     <label className="text-[10px] font-black uppercase text-muted-foreground">Prompt / Abstract</label>
                     <Textarea 
+                      value={prompt}
+                      onChange={(e) => setPrompt(e.target.value)}
                       placeholder="e.g. A deep dive into the 2024 AI chip landscape and NVIDIA's dominance..." 
                       className="bg-black/40 border-white/5 h-24 rounded-xl focus:ring-emerald-600/50"
                     />
@@ -93,7 +115,7 @@ export default function BlogStudioPage() {
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <label className="text-[10px] font-black uppercase text-muted-foreground">Tone</label>
-                      <Select defaultValue="technical">
+                      <Select value={tone} onValueChange={(v: any) => setTone(v)}>
                         <SelectTrigger className="bg-black/40 border-white/5 h-10 rounded-xl">
                           <SelectValue />
                         </SelectTrigger>
@@ -107,7 +129,7 @@ export default function BlogStudioPage() {
                     </div>
                     <div className="space-y-2">
                       <label className="text-[10px] font-black uppercase text-muted-foreground">Target</label>
-                      <Select defaultValue="medium">
+                      <Select value={target} onValueChange={(v: any) => setTarget(v)}>
                         <SelectTrigger className="bg-black/40 border-white/5 h-10 rounded-xl">
                           <SelectValue />
                         </SelectTrigger>
@@ -120,8 +142,13 @@ export default function BlogStudioPage() {
                       </Select>
                     </div>
                   </div>
-                  <Button className="w-full h-12 bg-emerald-600 hover:bg-emerald-700 font-black uppercase tracking-widest rounded-xl shadow-lg shadow-emerald-600/20">
-                    Architect Content <Sparkles className="w-4 h-4 ml-2" />
+                  <Button 
+                    onClick={handleGenerate}
+                    disabled={isGenerating || !prompt.trim()}
+                    className="w-full h-12 bg-emerald-600 hover:bg-emerald-700 font-black uppercase tracking-widest rounded-xl shadow-lg shadow-emerald-600/20"
+                  >
+                    {isGenerating ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Sparkles className="w-4 h-4 mr-2" />}
+                    Architect Content
                   </Button>
                 </div>
               </div>
@@ -132,7 +159,12 @@ export default function BlogStudioPage() {
                   <h3 className="text-[10px] font-black uppercase tracking-widest">SEO Blueprint</h3>
                 </div>
                 <div className="space-y-3">
-                  {['Keyword Density', 'Readability Score', 'Link Integrity', 'Alt Text Status'].map(item => (
+                  {keywords.length > 0 ? keywords.slice(0, 4).map(kw => (
+                    <div key={kw} className="flex items-center justify-between p-3 rounded-xl bg-black/40 border border-white/5">
+                      <span className="text-[10px] font-black uppercase text-muted-foreground">{kw}</span>
+                      <CheckCircle className="w-3.5 h-3.5 text-emerald-500" />
+                    </div>
+                  )) : ['Keyword Density', 'Readability Score', 'Link Integrity', 'Alt Text Status'].map(item => (
                     <div key={item} className="flex items-center justify-between p-3 rounded-xl bg-black/40 border border-white/5">
                       <span className="text-[10px] font-black uppercase text-muted-foreground">{item}</span>
                       <CheckCircle className="w-3.5 h-3.5 text-emerald-500/30" />
