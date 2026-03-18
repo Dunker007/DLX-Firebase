@@ -16,7 +16,8 @@ import {
   Video, 
   BarChart3, 
   Activity,
-  Globe
+  Globe,
+  AlertCircle
 } from 'lucide-react';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 
@@ -61,18 +62,25 @@ export default function DashboardPage() {
 
   return (
     <div className="max-w-7xl mx-auto space-y-12">
-      {/* Platform Status */}
-      <section className="flex flex-col md:flex-row items-center gap-4 p-4 rounded-2xl bg-[#0a0a0c] border border-white/5">
-        <div className="flex items-center gap-3 bg-white/5 px-4 py-2 rounded-xl border border-white/5">
-           <Zap className="w-4 h-4 text-primary animate-pulse" />
-           <span className="text-[10px] font-black uppercase tracking-widest">Neural Bridge: Active</span>
+      {/* Beta Status Banner */}
+      <section className="relative overflow-hidden p-6 rounded-[2rem] bg-gradient-to-r from-primary/20 to-accent/10 border border-white/10 flex flex-col md:flex-row items-center justify-between gap-6 group">
+        <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 blur-3xl rounded-full -mr-20 -mt-20 group-hover:bg-primary/10 transition-colors duration-500" />
+        <div className="flex items-center gap-6 relative z-10">
+          <div className="w-14 h-14 rounded-2xl bg-primary flex items-center justify-center shadow-lg shadow-primary/20">
+            <Sparkles className="w-8 h-8 text-white" />
+          </div>
+          <div>
+            <h2 className="font-headline text-2xl font-black uppercase tracking-tight">Beta v0.1.0 Online</h2>
+            <p className="text-xs text-muted-foreground font-black uppercase tracking-widest mt-1 opacity-60">Nexus Neural OS • Enterprise Tier Active</p>
+          </div>
         </div>
-        <div className="flex items-center gap-3 bg-white/5 px-4 py-2 rounded-xl border border-white/5">
-           <Sparkles className="w-4 h-4 text-accent" />
-           <span className="text-[10px] font-black uppercase tracking-widest">Model: Gemini 2.5 Flash</span>
+        <div className="flex items-center gap-4 relative z-10">
+          <Badge variant="outline" className="border-emerald-500/20 text-emerald-500 bg-emerald-500/5 font-black uppercase text-[10px] tracking-widest px-4 h-8">System Nominal</Badge>
+          <div className="flex items-center gap-2 px-4 py-2 bg-white/5 border border-white/10 rounded-xl">
+            <Activity className="w-4 h-4 text-primary animate-pulse" />
+            <span className="text-[10px] font-black uppercase text-white/40 tracking-[0.2em]">Matrix Sync: 100%</span>
+          </div>
         </div>
-        <div className="flex-1" />
-        <span className="text-[10px] text-muted-foreground font-black uppercase tracking-[0.2em] px-4">LuxAI Enterprise Environment</span>
       </section>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">

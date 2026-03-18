@@ -34,6 +34,7 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Badge } from "@/components/ui/badge"
 
 const items = [
   { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
@@ -93,7 +94,7 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-      <SidebarFooter className="p-4 border-t border-white/5">
+      <SidebarFooter className="p-4 border-t border-white/5 space-y-4">
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton asChild tooltip="Settings" className="hover:bg-white/5">
@@ -118,6 +119,13 @@ export function AppSidebar() {
             </div>
           </SidebarMenuItem>
         </SidebarMenu>
+        {state !== "collapsed" && (
+          <div className="px-2">
+            <Badge variant="outline" className="w-full border-primary/20 bg-primary/5 text-primary text-[8px] font-black uppercase tracking-widest justify-center py-1">
+              BETA v0.1.0
+            </Badge>
+          </div>
+        )}
       </SidebarFooter>
     </Sidebar>
   )
