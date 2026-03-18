@@ -12,7 +12,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Badge } from "@/components/ui/badge"
 import { useFirestore, useUser, useCollection, useMemoFirebase } from "@/firebase"
-import { collection, query, orderBy, serverTimestamp, addDoc, limit } from "firebase/firestore"
+import { collection, query, orderBy, serverTimestamp, limit } from "firebase/firestore"
 import { addDocumentNonBlocking } from "@/firebase/non-blocking-updates"
 
 const personas = [
@@ -35,10 +35,8 @@ export default function ChatPage() {
   const [isLoading, setIsLoading] = React.useState(false)
   const scrollAreaRef = React.useRef<HTMLDivElement>(null)
 
-  // Memoized conversation query
   const messagesQuery = useMemoFirebase(() => {
     if (!db || !user) return null;
-    // For this prototype, we'll use a single "global" conversation per persona for the user
     return query(
       collection(db, 'users', user.uid, 'ai_conversations', selectedPersona, 'messages'),
       orderBy('timestamp', 'asc'),
@@ -59,7 +57,6 @@ export default function ChatPage() {
       conversationId: selectedPersona
     }
 
-    // Add to Firestore (non-blocking for better UX)
     const messagesRef = collection(db, 'users', user.uid, 'ai_conversations', selectedPersona, 'messages');
     addDocumentNonBlocking(messagesRef, userMessage);
     
@@ -87,7 +84,6 @@ export default function ChatPage() {
     }
   }
 
-  // Auto-scroll to bottom
   React.useEffect(() => {
     if (scrollAreaRef.current) {
       const scrollContainer = scrollAreaRef.current.querySelector('[data-radix-scroll-area-viewport]');
@@ -99,9 +95,8 @@ export default function ChatPage() {
 
   return (
     <div className="flex h-[calc(100vh-140px)] gap-6 max-w-7xl mx-auto">
-      {/* Sidebar - Persona Selection */}
       <aside className="w-80 hidden lg:flex flex-col gap-4">
-        <h2 className="font-headline text-2xl font-black mb-2 px-2">Personas</h2>
+        <h2 className="font-headline text-2xl font-black mb-2 px-2 uppercase">Personas</h2>
         {personas.map((p) => (
           <Card
             key={p.name}
@@ -122,17 +117,8 @@ export default function ChatPage() {
             <p className="text-xs text-muted-foreground font-medium leading-relaxed">{p.desc}</p>
           </Card>
         ))}
-        
-        <div className="mt-auto glass-panel p-4 rounded-xl border-accent/20">
-          <div className="flex items-center gap-2 mb-2 text-accent">
-            <Info className="w-4 h-4" />
-            <span className="text-xs font-bold uppercase tracking-widest">Model Info</span>
-          </div>
-          <p className="text-xs text-muted-foreground font-medium">All agents are currently linked to Gemini Pro.</p>
-        </div>
       </aside>
 
-      {/* Main Chat Area */}
       <main className="flex-1 flex flex-col glass-panel rounded-3xl border-white/5 overflow-hidden">
         <header className="p-4 border-b border-white/5 bg-white/5 flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -140,19 +126,19 @@ export default function ChatPage() {
               <Sparkles className="w-6 h-6 text-primary" />
             </div>
             <div>
-              <h3 className="font-bold text-lg leading-none">{selectedPersona} Agent</h3>
-              <p className="text-xs text-muted-foreground font-medium mt-1">Active Now</p>
+              <h3 className="font-bold text-lg leading-none uppercase">{selectedPersona} Agent</h3>
+              <p className="text-xs text-muted-foreground font-medium mt-1">Grounded Signal Active</p>
             </div>
           </div>
-          <Badge variant="outline" className="border-accent/30 text-accent font-bold">GEMINI ENGINE</Badge>
+          <Badge variant="outline" className="border-accent/30 text-accent font-bold uppercase">NEXUS_SYNC</Badge>
         </header>
 
         <ScrollArea className="flex-1 p-6" ref={scrollAreaRef}>
           <div className="space-y-6">
             {!user && (
               <div className="text-center p-12 space-y-4">
-                <p className="text-sm text-muted-foreground">You must be logged in to chat with agents.</p>
-                <Button variant="outline" className="h-9 font-black uppercase tracking-widest text-[10px]">Sign In</Button>
+                <p className="text-sm text-muted-foreground">You must establish a neural link to begin.</p>
+                <Button asChild variant="outline" className="h-9 font-black uppercase tracking-widest text-[10px]">Establish Link</Button>
               </div>
             )}
             {user && messages?.map((m) => (
@@ -171,29 +157,9 @@ export default function ChatPage() {
                   }`}>
                     {m.content}
                   </div>
-                  <span className="text-[10px] text-muted-foreground mt-2 uppercase font-bold tracking-widest">
-                    {m.timestamp?.toDate ? m.timestamp.toDate().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Sending...'}
-                  </span>
                 </div>
               </div>
             ))}
-            {isLoading && (
-              <div className="flex gap-4">
-                <Avatar className="w-10 h-10 border border-primary/20 animate-pulse">
-                  <AvatarFallback className="bg-primary/10 text-primary">...</AvatarFallback>
-                </Avatar>
-                <div className="flex items-center gap-2 p-4 rounded-2xl bg-white/5 border border-white/5 rounded-tl-none">
-                  <span className="w-2 h-2 rounded-full bg-primary animate-bounce [animation-delay:-0.3s]" />
-                  <span className="w-2 h-2 rounded-full bg-primary animate-bounce [animation-delay:-0.15s]" />
-                  <span className="w-2 h-2 rounded-full bg-primary animate-bounce" />
-                </div>
-              </div>
-            )}
-            {user && messages?.length === 0 && !isLoading && !isMessagesLoading && (
-              <div className="text-center p-12 text-muted-foreground/30 text-xs font-black uppercase tracking-widest">
-                No conversation history. Start chatting to begin.
-              </div>
-            )}
           </div>
         </ScrollArea>
 
@@ -202,7 +168,7 @@ export default function ChatPage() {
             <Input
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder={`Message ${selectedPersona}...`}
+              placeholder={`Communicate with ${selectedPersona}...`}
               disabled={!user || isLoading}
               className="h-14 rounded-2xl bg-background border-white/10 pr-16 focus-visible:ring-primary/50 transition-all font-medium"
             />

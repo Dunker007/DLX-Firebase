@@ -7,10 +7,8 @@ import {
   Video, 
   Sparkles, 
   Play, 
-  Download, 
   Trash2, 
   Plus,
-  Monitor,
   Layout,
   Clock,
   Settings2,
@@ -21,11 +19,7 @@ import {
   Share2,
   ChevronRight,
   ChevronLeft,
-  MoreVertical,
   History,
-  FileVideo,
-  ExternalLink,
-  Square
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
@@ -69,14 +63,6 @@ export default function VideoProductionStudio() {
             </div>
           </div>
           <div className="flex items-center gap-3">
-             <div className="flex items-center -space-x-2 mr-4">
-               {[1,2,3].map(i => (
-                 <div key={i} className="w-6 h-6 rounded-full border-2 border-[#0a0a0c] bg-white/10 overflow-hidden">
-                   <img src={`https://picsum.photos/seed/user${i}/24/24`} alt="Collaborator" />
-                 </div>
-               ))}
-               <div className="w-6 h-6 rounded-full border-2 border-[#0a0a0c] bg-white/5 flex items-center justify-center text-[8px] font-black text-muted-foreground">+5</div>
-             </div>
              <Button variant="ghost" size="sm" className="h-9 text-[10px] font-black uppercase gap-2 hover:bg-white/5">
                 <Share2 className="w-3.5 h-3.5" /> Share
              </Button>
@@ -132,18 +118,16 @@ export default function VideoProductionStudio() {
                       <Play className="w-6 h-6 text-white fill-white ml-1" />
                     </div>
                   </div>
-                  {/* Overlay UI elements */}
                   <div className="absolute bottom-6 right-6 flex items-center gap-2">
                     <Badge className="bg-black/60 backdrop-blur-md border-white/10 text-[10px] font-black">4K | 60FPS</Badge>
                   </div>
                 </Card>
                 
-                {/* Secondary Viewport Controls */}
                 <div className="flex items-center justify-between px-2">
                   <div className="flex items-center gap-4">
-                    <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-white"><ChevronLeft className="w-4 h-4" /></Button>
+                    <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-white" onClick={() => setActiveScene(Math.max(1, activeScene - 1))}><ChevronLeft className="w-4 h-4" /></Button>
                     <span className="text-[10px] font-black text-white uppercase tracking-widest">Scene {activeScene} of 4</span>
-                    <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-white"><ChevronRight className="w-4 h-4" /></Button>
+                    <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-white" onClick={() => setActiveScene(Math.min(4, activeScene + 1))}><ChevronRight className="w-4 h-4" /></Button>
                   </div>
                   <div className="flex items-center gap-3 bg-white/5 rounded-full px-4 py-1.5 border border-white/5">
                     <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
@@ -208,11 +192,6 @@ export default function VideoProductionStudio() {
                         <span className="text-[8px] font-black uppercase tracking-widest">Append</span>
                      </button>
                   </div>
-                  
-                  {/* Global Scrubber Line */}
-                  <div className="absolute top-0 left-[280px] bottom-0 w-[2px] bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.5)] z-20 pointer-events-none">
-                     <div className="w-3 h-3 bg-blue-500 rounded-full -translate-x-1/2 -mt-1.5 ring-4 ring-blue-500/20" />
-                  </div>
                </div>
             </div>
           </main>
@@ -251,30 +230,8 @@ export default function VideoProductionStudio() {
                         </Button>
                       </Card>
                    </div>
-
-                   <div className="space-y-4 pt-4 border-t border-white/5">
-                      <p className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">Publishing Targets</p>
-                      <div className="space-y-2">
-                        {[
-                          { name: 'Internal Review', status: 'Ready' },
-                          { name: 'Social Media', status: 'Draft' },
-                          { name: 'YouTube Channel', status: 'Linked' },
-                        ].map((target, i) => (
-                          <div key={i} className="flex items-center justify-between p-3 bg-white/5 border border-white/5 rounded-xl hover:bg-white/10 cursor-pointer transition-colors">
-                            <span className="text-xs font-bold">{target.name}</span>
-                            <Badge variant="outline" className="text-[8px] font-black border-none text-muted-foreground">{target.status}</Badge>
-                          </div>
-                        ))}
-                      </div>
-                   </div>
                 </div>
              </ScrollArea>
-             
-             <div className="p-4 bg-[#0e0e11] border-t border-white/5">
-                <Button className="w-full h-11 bg-white/5 hover:bg-white/10 text-white font-black uppercase text-[10px] tracking-widest border border-white/10 rounded-xl">
-                   Open Project Assets
-                </Button>
-             </div>
           </aside>
         </div>
       </div>

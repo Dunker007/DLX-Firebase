@@ -16,8 +16,6 @@ import {
   Video, 
   BarChart3, 
   Activity,
-  History,
-  MessageSquare,
   Globe
 } from 'lucide-react';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
@@ -42,16 +40,6 @@ const featuredStudios = [
     image: PlaceHolderImages.find(img => img.id === 'studio-smartfolio')?.imageUrl,
     href: '/smart-folio',
     color: 'hsl(var(--primary))'
-  },
-  {
-    id: 'music-studio',
-    title: 'SonicGen Hub',
-    description: 'Neural soundscapes and composition with high-fidelity studio integration.',
-    icon: Music,
-    status: 'Live',
-    image: PlaceHolderImages.find(img => img.id === 'studio-music')?.imageUrl,
-    href: '/studios/music',
-    color: 'hsl(var(--accent))'
   }
 ];
 
@@ -91,7 +79,7 @@ export default function DashboardPage() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {featuredStudios.slice(0, 2).map((studio) => (
+              {featuredStudios.map((studio) => (
                 <Card key={studio.id} className="group overflow-hidden border-white/5 bg-[#0a0a0c] hover:bg-card/60 transition-all duration-500 relative rounded-3xl">
                   <div className="aspect-video relative overflow-hidden">
                     <Image 

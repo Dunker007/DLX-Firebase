@@ -50,17 +50,13 @@ export default function LabsPage() {
             Live Data
           </Button>
           <Button variant="default" size="sm" className="h-9 bg-cyan-600 hover:bg-cyan-700 text-[10px] font-black uppercase shadow-lg shadow-cyan-600/20">Sync to OS</Button>
-          <div className="flex items-center border border-white/5 bg-white/5 rounded-lg p-1">
-             <Button variant="ghost" size="icon" className="h-7 w-7"><LayoutGrid className="w-3.5 h-3.5" /></Button>
-             <Button variant="ghost" size="icon" className="h-7 w-7 bg-background"><ListFilter className="w-3.5 h-3.5" /></Button>
-          </div>
         </div>
       </div>
 
       {/* Filters & Search */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="flex items-center gap-2 overflow-x-auto pb-2 md:pb-0 no-scrollbar">
-          {["All", "Operations", "Intelligence", "Creation", "Capital", "Experimental"].map((filter, i) => (
+          {["All", "Operations", "Intelligence", "Creation", "Capital"].map((filter, i) => (
             <Button 
               key={filter} 
               variant={i === 0 ? "default" : "outline"} 
@@ -116,12 +112,10 @@ export default function LabsPage() {
                 </Badge>
               </div>
               <div className="relative grid grid-cols-12 h-full">
-                {/* Vertical Grid Lines */}
                 {months.map((_, mi) => (
                   <div key={mi} className="border-r border-white/[0.03] h-full last:border-r-0" />
                 ))}
                 
-                {/* Timeline Bar (Simulated positions for the prototype) */}
                 <div 
                   className="absolute top-1/2 -translate-y-1/2 h-6 rounded-full bg-cyan-900/20 border border-cyan-500/20 overflow-hidden"
                   style={{
@@ -145,22 +139,6 @@ export default function LabsPage() {
             </div>
           )}
         </div>
-      </div>
-
-      {/* Footer Info */}
-      <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-widest text-muted-foreground px-2">
-        <div className="flex items-center gap-6">
-           <div className="flex items-center gap-2">
-             <div className="w-2 h-2 rounded-full bg-cyan-500" /> <span>Active</span>
-           </div>
-           <div className="flex items-center gap-2">
-             <div className="w-2 h-2 rounded-full bg-orange-500" /> <span>Preview</span>
-           </div>
-           <div className="flex items-center gap-2">
-             <div className="w-2 h-2 rounded-full bg-muted-foreground/30" /> <span>Concept</span>
-           </div>
-        </div>
-        <div>{filteredProjects.length} projects — Click to open</div>
       </div>
     </div>
   );
