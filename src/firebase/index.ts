@@ -15,12 +15,14 @@ export function initializeFirebase() {
     let firebaseApp;
     try {
       // Attempt to initialize via Firebase App Hosting environment variables
+      // Only do this if we are NOT in a build environment or if we are confident
+      // it won't throw a fatal error during static generation.
       firebaseApp = initializeApp();
     } catch (e) {
       // Only warn in production because it's normal to use the firebaseConfig to initialize
       // during development
-      if (process.env.NODE_ENV === "production") {
-        console.warn('Automatic initialization failed. Falling back to firebase config object.', e);
+      if (process.env.NODE_ENV === "production" && !process.env.NEXT_PHASE) {
+         console.warn('Automatic initialization failed. Falling back to firebase config object.', e);
       }
       firebaseApp = initializeApp(firebaseConfig);
     }
