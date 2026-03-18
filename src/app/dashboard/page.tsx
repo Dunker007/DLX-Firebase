@@ -51,6 +51,14 @@ const neuralLogs = [
 ];
 
 export default function DashboardPage() {
+  const [hasMounted, setHasMounted] = React.useState(false);
+
+  React.useEffect(() => {
+    setHasMounted(true);
+  }, []);
+
+  if (!hasMounted) return null;
+
   return (
     <div className="max-w-7xl mx-auto space-y-12">
       {/* Platform Status */}
@@ -173,8 +181,12 @@ export default function DashboardPage() {
                     </div>
                  </div>
                  <div className="grid grid-cols-2 gap-2">
-                    <Button variant="outline" size="sm" className="h-8 border-white/5 bg-white/5 text-[8px] font-black uppercase">Archive</Button>
-                    <Button variant="outline" size="sm" className="h-8 border-white/5 bg-white/5 text-[8px] font-black uppercase">Settings</Button>
+                    <Button asChild variant="outline" size="sm" className="h-8 border-white/5 bg-white/5 text-[8px] font-black uppercase">
+                      <Link href="/dashboard/drive">Archive</Link>
+                    </Button>
+                    <Button asChild variant="outline" size="sm" className="h-8 border-white/5 bg-white/5 text-[8px] font-black uppercase">
+                      <Link href="/dashboard/settings">Settings</Link>
+                    </Button>
                  </div>
               </div>
            </Card>

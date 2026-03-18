@@ -151,7 +151,9 @@ function ChatContent() {
             {!user && (
               <div className="text-center p-12 space-y-4">
                 <p className="text-sm text-muted-foreground font-black uppercase tracking-widest">You must establish a neural link to begin.</p>
-                <Button asChild variant="outline" className="h-9 font-black uppercase tracking-widest text-[10px] rounded-full">Establish Link</Button>
+                <Button asChild variant="outline" className="h-9 font-black uppercase tracking-widest text-[10px] rounded-full">
+                  <Link href="/login">Establish Link</Link>
+                </Button>
               </div>
             )}
             {user && messages?.map((m) => (
