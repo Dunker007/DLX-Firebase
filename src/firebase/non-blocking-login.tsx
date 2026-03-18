@@ -9,29 +9,23 @@ import {
   // Assume getAuth and app are initialized elsewhere
 } from 'firebase/auth';
 
-/** Initiate anonymous sign-in (non-blocking). */
-export function initiateAnonymousSignIn(authInstance: Auth): void {
-  // CRITICAL: Call signInAnonymously directly. Do NOT use 'await signInAnonymously(...)'.
-  signInAnonymously(authInstance).catch(console.error);
-  // Code continues immediately. Auth state change is handled by onAuthStateChanged listener.
+/** Initiate anonymous sign-in. */
+export async function initiateAnonymousSignIn(authInstance: Auth): Promise<void> {
+  await signInAnonymously(authInstance);
 }
 
-/** Initiate email/password sign-up (non-blocking). */
-export function initiateEmailSignUp(authInstance: Auth, email: string, password: string): void {
-  // CRITICAL: Call createUserWithEmailAndPassword directly. Do NOT use 'await createUserWithEmailAndPassword(...)'.
-  createUserWithEmailAndPassword(authInstance, email, password).catch(console.error);
-  // Code continues immediately. Auth state change is handled by onAuthStateChanged listener.
+/** Initiate email/password sign-up. */
+export async function initiateEmailSignUp(authInstance: Auth, email: string, password: string): Promise<void> {
+  await createUserWithEmailAndPassword(authInstance, email, password);
 }
 
-/** Initiate email/password sign-in (non-blocking). */
-export function initiateEmailSignIn(authInstance: Auth, email: string, password: string): void {
-  // CRITICAL: Call signInWithEmailAndPassword directly. Do NOT use 'await signInWithEmailAndPassword(...)'.
-  signInWithEmailAndPassword(authInstance, email, password).catch(console.error);
-  // Code continues immediately. Auth state change is handled by onAuthStateChanged listener.
+/** Initiate email/password sign-in. */
+export async function initiateEmailSignIn(authInstance: Auth, email: string, password: string): Promise<void> {
+  await signInWithEmailAndPassword(authInstance, email, password);
 }
 
-/** Initiate Google Sign-in via popup (non-blocking). */
-export function initiateGoogleSignIn(authInstance: Auth): void {
+/** Initiate Google Sign-in via popup. */
+export async function initiateGoogleSignIn(authInstance: Auth): Promise<void> {
   const provider = new GoogleAuthProvider();
-  signInWithPopup(authInstance, provider).catch(console.error);
+  await signInWithPopup(authInstance, provider);
 }

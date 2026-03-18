@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { useRouter } from 'next/navigation';
-import { Sparkles, ArrowRight, Github, Mail, Loader2, Bot } from 'lucide-react';
+import { Sparkles, Bot, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
@@ -16,6 +16,7 @@ export default function LoginPage() {
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
   const [isSigningIn, setIsSigningIn] = React.useState(false);
+  const [errorMsg, setErrorMsg] = React.useState<string | null>(null);
 
   React.useEffect(() => {
     if (user && !isUserLoading) {
@@ -23,23 +24,45 @@ export default function LoginPage() {
     }
   }, [user, isUserLoading, router]);
 
-  const handleEmailLogin = (e: React.FormEvent) => {
+  const handleEmailLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email || !password || !auth) return;
     setIsSigningIn(true);
-    initiateEmailSignIn(auth, email, password);
+    setErrorMsg(null);
+    try {
+      await initiateEmailSignIn(auth, email, password);
+    } catch (err: any) {
+      setErrorMsg(err.message || 'Login failed.');
+      setIsSigningIn(false);
+    }
   };
 
-  const handleAnonymousLogin = () => {
+  const handleAnonymousLogin = async () => {
     if(!auth) return;
     setIsSigningIn(true);
-    initiateAnonymousSignIn(auth);
+    setErrorMsg(null);
+    try {
+      await initiateAnonymousSignIn(auth);
+    } catch (err: any) {
+      setErrorMsg(err.message || 'Anonymous login failed.');
+      setIsSigningIn(false);
+    }
   };
   
-  const handleGoogleLogin = () => {
+  const handleGoogleLogin = async () => {
     if(!auth) return;
     setIsSigningIn(true);
-    initiateGoogleSignIn(auth);
+    setErrorMsg(null);
+    try {
+      await initiateGoogleSignIn(auth);
+    } catch (err: any) {
+      // We specifically ignore the "popup-closed-by-user" error because 
+      // the user might just have changed their mind, but we need to reset the loading state.
+      if (err.code !== 'auth/popup-closed-by-user' && err.code !== 'auth/cancelled-popup-request') {
+        setErrorMsg(err.message || 'Google login failed.');
+      }
+      setIsSigningIn(false);
+    }
   }
 
   return (
@@ -78,6 +101,13 @@ export default function LoginPage() {
                   className="h-12 bg-black/40 border-white/5 rounded-xl focus-visible:ring-primary text-xs font-bold"
                 />
               </div>
+              
+              {errorMsg && (
+                <div className="text-red-500 text-[10px] font-bold uppercase tracking-widest bg-red-500/10 border border-red-500/20 p-3 rounded-xl">
+                  {errorMsg}
+                </div>
+              )}
+
               <Button type="submit" disabled={isSigningIn} className="w-full h-12 bg-primary hover:bg-primary/90 rounded-xl font-black uppercase tracking-widest text-xs">
                 {isSigningIn ? <Loader2 className="w-4 h-4 animate-spin" /> : "Initiate Link"}
               </Button>
