@@ -7,7 +7,7 @@ import DashboardLayout from '../dashboard/layout';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Sparkles, PieChart, Music, FileText, Zap, ChevronRight, Video, LayoutGrid } from 'lucide-react';
+import { Sparkles, PieChart, Music, FileText, Zap, ChevronRight, Video, LayoutGrid, Palette } from 'lucide-react';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 
 const studios = [
@@ -46,20 +46,20 @@ const studios = [
     title: 'CopyArchitect',
     description: 'Advanced blog and technical content generation toolkit.',
     icon: FileText,
-    status: 'Beta',
+    status: 'Live',
     image: PlaceHolderImages.find(img => img.id === 'studio-blog')?.imageUrl,
-    href: '#',
-    color: 'hsl(280 65% 60%)'
+    href: '/studios/blog',
+    color: 'hsl(142 70% 45%)'
   },
   {
-    id: 'vision-studio',
+    id: 'art-studio',
     title: 'VisionaryAI',
     description: 'Generative image and branding assets for modern teams.',
-    icon: Zap,
-    status: 'Coming Soon',
+    icon: Palette,
+    status: 'Live',
     image: 'https://picsum.photos/seed/vision/600/400',
-    href: '#',
-    color: 'hsl(173 58% 39%)'
+    href: '/studios/art',
+    color: 'hsl(24 95% 53%)'
   }
 ];
 
@@ -74,8 +74,8 @@ export default function StudiosHubPage() {
                 <LayoutGrid className="w-6 h-6 text-primary" />
               </div>
               <div>
-                <h1 className="font-headline text-4xl font-black tracking-tight">Studios Hub</h1>
-                <p className="text-muted-foreground font-medium text-lg">Your gateway to specialized intelligence tools.</p>
+                <h1 className="font-headline text-4xl font-black tracking-tight uppercase">Studios Hub</h1>
+                <p className="text-muted-foreground font-medium text-lg uppercase tracking-widest text-[10px] font-black">Your gateway to specialized intelligence tools</p>
               </div>
             </div>
           </div>
@@ -104,7 +104,7 @@ export default function StudiosHubPage() {
                   <div className="w-12 h-12 rounded-xl bg-background border border-white/5 flex items-center justify-center mb-4 shadow-xl group-hover:border-primary/30 transition-colors">
                     <studio.icon className="w-6 h-6" style={{ color: studio.color }} />
                   </div>
-                  <CardTitle className="font-headline text-xl font-bold">{studio.title}</CardTitle>
+                  <CardTitle className="font-headline text-xl font-bold uppercase">{studio.title}</CardTitle>
                 </CardHeader>
                 <CardContent className="pb-4">
                   <p className="text-muted-foreground text-sm font-medium h-10 overflow-hidden">{studio.description}</p>
