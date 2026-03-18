@@ -62,7 +62,6 @@ export default function SmartFolioHub() {
       });
       setAiReport(result);
 
-      // Persist to Firestore if user is logged in
       if (user && db) {
         const reportsRef = collection(db, 'users', user.uid, 'smart_folio_reports');
         addDocumentNonBlocking(reportsRef, {
@@ -83,7 +82,6 @@ export default function SmartFolioHub() {
 
   return (
     <div className="p-8 space-y-10 bg-[#0a0a0c] min-h-full">
-      {/* Header */}
       <div className="flex items-center justify-between">
         <div className="space-y-1">
           <div className="flex items-center gap-3">
@@ -107,7 +105,6 @@ export default function SmartFolioHub() {
         </div>
       </div>
 
-      {/* Ticker Tape */}
       <div className="flex items-center gap-8 overflow-hidden bg-white/5 border-y border-white/5 py-3 -mx-8 px-8">
         {[...Array(3)].map((_, i) => (
           <div key={i} className="flex items-center gap-8 shrink-0 animate-marquee">
@@ -125,7 +122,6 @@ export default function SmartFolioHub() {
         ))}
       </div>
 
-      {/* AI Insights Panel */}
       {aiReport && (
         <Card className="bg-blue-600/5 border-blue-500/20 p-8 rounded-3xl animate-in fade-in slide-in-from-top-4 duration-500">
           <div className="flex items-center gap-3 mb-6">
@@ -173,9 +169,7 @@ export default function SmartFolioHub() {
         </Card>
       )}
 
-      {/* Main Charts Row */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        {/* Allocation Monitor */}
         <Card className="lg:col-span-5 bg-[#0e0e11] border-white/5 p-6 rounded-3xl relative overflow-hidden group">
           <div className="flex items-center justify-between mb-8">
             <div className="flex items-center gap-2">
@@ -227,7 +221,6 @@ export default function SmartFolioHub() {
           </div>
         </Card>
 
-        {/* Equity Curve */}
         <Card className="lg:col-span-7 bg-[#0e0e11] border-white/5 p-6 rounded-3xl">
           <div className="flex items-center justify-between mb-8">
             <div className="flex items-center gap-2">
@@ -252,7 +245,6 @@ export default function SmartFolioHub() {
         </Card>
       </div>
 
-      {/* Asset Tactics Table */}
       <div className="space-y-4">
         <div className="flex items-center justify-between px-2">
            <div className="flex items-center gap-2">

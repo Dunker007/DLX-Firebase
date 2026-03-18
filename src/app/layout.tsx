@@ -3,8 +3,8 @@ import './globals.css';
 import { FirebaseClientProvider } from '@/firebase/client-provider';
 
 export const metadata: Metadata = {
-  title: 'LuxAI Platform | Futuristic AI Intelligence',
-  description: 'Unleash the power of specialized AI studios and agents.',
+  title: 'LuxAI Platform | Neural OS Beta',
+  description: 'Unleash the power of specialized AI studios and grounded intelligence.',
 };
 
 export default function RootLayout({
