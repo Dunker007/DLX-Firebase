@@ -12,13 +12,12 @@ import {
   FlaskConical,
   Settings,
   Sparkles,
-  PieChart,
-  Music,
-  Video,
-  LayoutGrid,
   Zap,
   HardDrive,
-  Users
+  Users,
+  LayoutGrid,
+  Video,
+  Radio
 } from "lucide-react"
 
 import {
@@ -37,51 +36,16 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
 const items = [
-  {
-    title: "Dashboard",
-    url: "/dashboard",
-    icon: LayoutDashboard,
-  },
-  {
-    title: "Studios",
-    url: "/studios",
-    icon: LayoutGrid,
-  },
-  {
-    title: "Chat",
-    url: "/chat",
-    icon: MessageSquare,
-  },
-  {
-    title: "Agents",
-    url: "/agents",
-    icon: Users,
-  },
-  {
-    title: "Agentflow",
-    url: "/dashboard/agentflow",
-    icon: Zap,
-  },
-  {
-    title: "News",
-    url: "/news",
-    icon: Newspaper,
-  },
-  {
-    title: "Meeting",
-    url: "/dashboard/meeting",
-    icon: Video,
-  },
-  {
-    title: "Labs",
-    url: "/labs",
-    icon: FlaskConical,
-  },
-  {
-    title: "Drive",
-    url: "/dashboard/drive",
-    icon: HardDrive,
-  },
+  { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
+  { title: "Studios", url: "/studios", icon: LayoutGrid },
+  { title: "Chat", url: "/chat", icon: MessageSquare },
+  { title: "Agents", url: "/dashboard/agents", icon: Users },
+  { title: "Agentflow", url: "/dashboard/agentflow", icon: Zap },
+  { title: "News", url: "/dashboard/news", icon: Newspaper },
+  { title: "Meeting", url: "/dashboard/meeting", icon: Video },
+  { title: "Labs", url: "/dashboard/labs", icon: FlaskConical },
+  { title: "Pipeline", url: "/dashboard/pipeline", icon: Radio },
+  { title: "Drive", url: "/dashboard/drive", icon: HardDrive },
 ]
 
 export function AppSidebar() {
@@ -89,7 +53,7 @@ export function AppSidebar() {
   const { state } = useSidebar()
 
   return (
-    <Sidebar collapsible="icon" className="border-r border-white/5">
+    <Sidebar collapsible="icon" className="border-r border-white/5 bg-[#08080a]">
       <SidebarHeader className="h-16 flex items-center px-4">
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 rounded-lg bg-cyan-500 flex items-center justify-center shadow-[0_0_15px_-2px_rgba(6,182,212,0.5)]">
@@ -133,7 +97,7 @@ export function AppSidebar() {
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton asChild tooltip="Settings" className="hover:bg-white/5">
-              <Link href="/settings">
+              <Link href="/dashboard/settings">
                 <Settings className="w-4 h-4" />
                 <span className="text-xs font-black uppercase tracking-tight">Settings</span>
               </Link>
