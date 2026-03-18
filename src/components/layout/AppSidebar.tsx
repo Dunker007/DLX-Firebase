@@ -63,7 +63,7 @@ export function AppSidebar() {
           </div>
           {state !== "collapsed" && (
             <div className="flex flex-col">
-              <span className="font-headline font-bold text-sm tracking-tight leading-none uppercase">Nexus OS</span>
+              <span className="font-headline font-bold text-sm tracking-tight leading-none uppercase">DLX AI Studios</span>
               <span className="text-[8px] font-black text-muted-foreground/60 tracking-widest uppercase">Local Interface</span>
             </div>
           )}

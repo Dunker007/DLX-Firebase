@@ -10,12 +10,12 @@ export default function Home() {
           <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center neon-glow">
             <Sparkles className="w-6 h-6 text-white" />
           </div>
-          <span className="font-headline font-bold text-2xl tracking-tighter uppercase">DLX Nexus</span>
+          <span className="font-headline font-bold text-2xl tracking-tighter uppercase">DLX AI Studios</span>
         </div>
         <div className="flex items-center gap-6">
           <Link href="/login" className="text-sm font-medium hover:text-primary transition-colors">Sign In</Link>
           <Button asChild className="bg-primary hover:bg-primary/90 neon-glow rounded-full px-6">
-            <Link href="/dashboard">Enter Nexus</Link>
+            <Link href="/dashboard">Enter Studio</Link>
           </Button>
         </div>
       </nav>
@@ -27,7 +27,7 @@ export default function Home() {
         </div>
         <h1 className="font-headline text-6xl md:text-8xl font-black mb-8 tracking-tighter leading-[0.9] text-white uppercase text-left w-full">
           Grounded <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">Intelligence.</span><br />
-          The DLX <span className="text-white/40">Protocol.</span>
+          The DLX <span className="text-white/40">Studio.</span>
         </h1>
         <p className="text-xl text-muted-foreground max-w-2xl mb-12 font-medium leading-relaxed text-left w-full">
           Orchestrate specialized AI personas across political, financial, and creative domains. A unified interface for the DLX thinking partnership.
@@ -39,7 +39,7 @@ export default function Home() {
             </Link>
           </Button>
           <Button size="lg" variant="outline" className="rounded-full px-8 h-14 text-lg border-white/10 hover:bg-white/5 uppercase font-black tracking-widest">
-            Protocol Docs
+            Studio Protocol
           </Button>
         </div>
 
@@ -63,12 +63,12 @@ export default function Home() {
           <div className="w-6 h-6 rounded bg-primary/20 flex items-center justify-center">
             <Sparkles className="w-3 h-3 text-primary" />
           </div>
-          <span>&copy; 2024 DLX Nexus Neural OS.</span>
+          <span>&copy; 2024 DLX AI Studios. Neural OS v0.1.0</span>
         </div>
         <div className="flex items-center gap-8">
           <Link href="#" className="hover:text-primary transition-colors">Neural Terms</Link>
           <Link href="#" className="hover:text-primary transition-colors">Privacy Protocol</Link>
-          <Link href="#" className="hover:text-primary transition-colors">Nexus Signal</Link>
+          <Link href="#" className="hover:text-primary transition-colors">Studio Signal</Link>
         </div>
       </footer>
     </div>
