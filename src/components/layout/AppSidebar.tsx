@@ -16,7 +16,8 @@ import {
   Users,
   LayoutGrid,
   Video,
-  Radio
+  Radio,
+  Network
 } from "lucide-react"
 
 import {
@@ -46,6 +47,7 @@ const items = [
   { title: "Meeting Room", url: "/dashboard/meeting", icon: Video },
   { title: "Labs Hub", url: "/dashboard/labs", icon: FlaskConical },
   { title: "Pipeline", url: "/dashboard/pipeline", icon: Radio },
+  { title: "Blueprint", url: "/dashboard/blueprint", icon: Network },
   { title: "Drive", url: "/dashboard/drive", icon: HardDrive },
 ]
 
