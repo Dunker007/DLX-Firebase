@@ -1,3 +1,4 @@
+
 "use client"
 
 import * as React from 'react';
@@ -10,13 +11,20 @@ import { collection, query, orderBy, limit } from 'firebase/firestore';
 
 export default function NewsPage() {
   const db = useFirestore();
+  const [hasMounted, setHasMounted] = React.useState(false);
+
+  React.useEffect(() => {
+    setHasMounted(true);
+  }, []);
   
   const newsQuery = useMemoFirebase(() => {
-    if (!db) return null;
+    if (!db || !hasMounted) return null;
     return query(collection(db, 'news_articles'), orderBy('publishDate', 'desc'), limit(10));
-  }, [db]);
+  }, [db, hasMounted]);
 
   const { data: newsItems, isLoading } = useCollection(newsQuery);
+
+  if (!hasMounted) return null;
 
   return (
     <div className="max-w-4xl mx-auto py-6">
@@ -31,14 +39,14 @@ export default function NewsPage() {
       </div>
 
       <div className="space-y-10">
-        {isLoading && (
+        {(isLoading || !newsItems) && (
           <div className="flex flex-col items-center justify-center py-20 space-y-4">
             <Loader2 className="w-8 h-8 animate-spin text-accent" />
             <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Syncing News Feed...</p>
           </div>
         )}
 
-        {!isLoading && newsItems?.map((item, i) => (
+        {!isLoading && newsItems?.map((item) => (
           <Card key={item.id} className="group overflow-hidden border-white/5 bg-[#0a0a0c]/40 hover:bg-[#0a0a0c]/60 transition-all cursor-pointer rounded-3xl">
             <div className="flex flex-col md:flex-row">
               <div className="md:w-1/3 relative aspect-video md:aspect-auto overflow-hidden">
@@ -53,7 +61,9 @@ export default function NewsPage() {
               <div className="flex-1 p-8">
                 <div className="flex items-center gap-3 mb-4">
                   <Badge variant="outline" className="border-accent/30 text-accent font-black text-[9px] uppercase tracking-widest">{item.category || 'Platform'}</Badge>
-                  <span className="text-[9px] text-muted-foreground font-black uppercase tracking-widest">{new Date(item.publishDate).toLocaleDateString()}</span>
+                  <span className="text-[9px] text-muted-foreground font-black uppercase tracking-widest">
+                    {item.publishDate ? new Date(item.publishDate).toLocaleDateString() : 'Pending'}
+                  </span>
                 </div>
                 <CardTitle className="font-headline text-2xl font-black mb-4 group-hover:text-accent transition-colors tracking-tight uppercase leading-tight">{item.title}</CardTitle>
                 <p className="text-muted-foreground text-sm font-medium leading-relaxed mb-8 opacity-80">

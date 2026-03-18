@@ -3,7 +3,7 @@
 
 import * as React from "react"
 import { useSearchParams } from "next/navigation"
-import { Send, Bot, Sparkles, Info, Loader2 } from "lucide-react"
+import { Send, Bot, Sparkles, SendHorizontal, Loader2 } from "lucide-react"
 import { chatWithAIAgentPersona } from "@/ai/flows/chat-ai-persona"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -21,30 +21,35 @@ const personas = [
   { name: "Dev", role: "Software Development", desc: "Direct and technical coding assistant.", icon: Bot, color: "text-green-500" },
 ] as const
 
-export default function ChatPage() {
+function ChatContent() {
   const searchParams = useSearchParams()
   const { user } = useUser()
   const db = useFirestore()
   
-  const initialPersona = searchParams.get("persona") as typeof personas[number]["name"] | null
-  
-  const [selectedPersona, setSelectedPersona] = React.useState<typeof personas[number]["name"]>(
-    initialPersona && personas.some(p => p.name === initialPersona) ? initialPersona : "Lux"
-  )
+  const [hasMounted, setHasMounted] = React.useState(false)
+  const [selectedPersona, setSelectedPersona] = React.useState<typeof personas[number]["name"]>("Lux")
   const [input, setInput] = React.useState("")
   const [isLoading, setIsLoading] = React.useState(false)
   const scrollAreaRef = React.useRef<HTMLDivElement>(null)
 
+  React.useEffect(() => {
+    setHasMounted(true)
+    const personaParam = searchParams.get("persona") as typeof personas[number]["name"] | null
+    if (personaParam && personas.some(p => p.name === personaParam)) {
+      setSelectedPersona(personaParam)
+    }
+  }, [searchParams])
+
   const messagesQuery = useMemoFirebase(() => {
-    if (!db || !user) return null;
+    if (!db || !user || !hasMounted) return null;
     return query(
       collection(db, 'users', user.uid, 'ai_conversations', selectedPersona, 'messages'),
       orderBy('timestamp', 'asc'),
       limit(50)
     );
-  }, [db, user, selectedPersona]);
+  }, [db, user, selectedPersona, hasMounted]);
 
-  const { data: messages, isLoading: isMessagesLoading } = useCollection(messagesQuery);
+  const { data: messages } = useCollection(messagesQuery);
 
   const handleSend = async (e?: React.FormEvent) => {
     e?.preventDefault()
@@ -78,7 +83,7 @@ export default function ChatPage() {
 
       addDocumentNonBlocking(messagesRef, assistantMessage);
     } catch (error) {
-      console.error("Chat error:", error)
+      // Error handled centrally by FirebaseErrorListener
     } finally {
       setIsLoading(false)
     }
@@ -93,10 +98,18 @@ export default function ChatPage() {
     }
   }, [messages]);
 
+  if (!hasMounted) {
+    return (
+      <div className="flex h-[calc(100vh-140px)] items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-primary/20" />
+      </div>
+    )
+  }
+
   return (
     <div className="flex h-[calc(100vh-140px)] gap-6 max-w-7xl mx-auto">
       <aside className="w-80 hidden lg:flex flex-col gap-4">
-        <h2 className="font-headline text-2xl font-black mb-2 px-2 uppercase">Personas</h2>
+        <h2 className="font-headline text-2xl font-black mb-2 px-2 uppercase tracking-tight">Personas</h2>
         {personas.map((p) => (
           <Card
             key={p.name}
@@ -110,7 +123,7 @@ export default function ChatPage() {
                 <p.icon className={`w-5 h-5 ${p.color}`} />
               </div>
               <div>
-                <h3 className="font-bold text-sm">{p.name}</h3>
+                <h3 className="font-bold text-sm uppercase tracking-tight">{p.name}</h3>
                 <p className="text-[10px] text-muted-foreground uppercase tracking-widest font-bold">{p.role}</p>
               </div>
             </div>
@@ -126,19 +139,19 @@ export default function ChatPage() {
               <Sparkles className="w-6 h-6 text-primary" />
             </div>
             <div>
-              <h3 className="font-bold text-lg leading-none uppercase">{selectedPersona} Agent</h3>
+              <h3 className="font-bold text-lg leading-none uppercase tracking-tight">{selectedPersona} Agent</h3>
               <p className="text-xs text-muted-foreground font-medium mt-1">Grounded Signal Active</p>
             </div>
           </div>
-          <Badge variant="outline" className="border-accent/30 text-accent font-bold uppercase">NEXUS_SYNC</Badge>
+          <Badge variant="outline" className="border-accent/30 text-accent font-black uppercase tracking-widest text-[9px]">NEXUS_SYNC</Badge>
         </header>
 
         <ScrollArea className="flex-1 p-6" ref={scrollAreaRef}>
           <div className="space-y-6">
             {!user && (
               <div className="text-center p-12 space-y-4">
-                <p className="text-sm text-muted-foreground">You must establish a neural link to begin.</p>
-                <Button asChild variant="outline" className="h-9 font-black uppercase tracking-widest text-[10px]">Establish Link</Button>
+                <p className="text-sm text-muted-foreground font-black uppercase tracking-widest">You must establish a neural link to begin.</p>
+                <Button asChild variant="outline" className="h-9 font-black uppercase tracking-widest text-[10px] rounded-full">Establish Link</Button>
               </div>
             )}
             {user && messages?.map((m) => (
@@ -178,11 +191,19 @@ export default function ChatPage() {
               className="absolute right-2 top-2 h-10 w-10 rounded-xl bg-primary hover:bg-primary/90 neon-glow"
               disabled={!input.trim() || isLoading || !user}
             >
-              <Send className="w-5 h-5" />
+              {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <SendHorizontal className="w-5 h-5" />}
             </Button>
           </form>
         </footer>
       </main>
     </div>
+  )
+}
+
+export default function ChatPage() {
+  return (
+    <React.Suspense fallback={<div className="flex h-screen items-center justify-center"><Loader2 className="w-8 h-8 animate-spin text-primary" /></div>}>
+      <ChatContent />
+    </React.Suspense>
   )
 }
