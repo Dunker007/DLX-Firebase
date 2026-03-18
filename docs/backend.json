@@ -1,0 +1,604 @@
+{
+  "entities": {
+    "UserProfile": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "UserProfile",
+      "type": "object",
+      "description": "Represents a user's basic profile information, serving as the central identity for accessing platform features.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the UserProfile entity."
+        },
+        "email": {
+          "type": "string",
+          "description": "The user's unique email address, used for identification and communication.",
+          "format": "email"
+        },
+        "displayName": {
+          "type": "string",
+          "description": "A user-friendly name displayed publicly on the platform."
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp indicating when the user profile was created.",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "Timestamp indicating when the user profile was last updated.",
+          "format": "date-time"
+        },
+        "settingsId": {
+          "type": "string",
+          "description": "Reference to the UserSettings entity, storing user-specific preferences. (Relationship: UserProfile 1:1 UserSettings)"
+        }
+      },
+      "required": [
+        "id",
+        "email",
+        "createdAt",
+        "updatedAt",
+        "settingsId"
+      ]
+    },
+    "AIStudio": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "AIStudio",
+      "type": "object",
+      "description": "Defines a specific AI-powered studio or tool available on the LuxAI Platform, such as SmartFolio or a Music studio.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the AIStudio entity."
+        },
+        "name": {
+          "type": "string",
+          "description": "The descriptive name of the AI studio (e.g., 'DLX SmartFolio', 'Music Studio')."
+        },
+        "description": {
+          "type": "string",
+          "description": "A brief explanation of the AI studio's purpose and functionality."
+        },
+        "status": {
+          "type": "string",
+          "description": "The current operational status of the AI studio, indicating its availability.",
+          "format": "string",
+          "items": {
+            "type": "string"
+          }
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp indicating when the AI studio definition was created.",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "Timestamp indicating when the AI studio definition was last updated.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "description",
+        "status",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "SmartFolioReport": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "SmartFolioReport",
+      "type": "object",
+      "description": "Stores the results and associated metadata of an AI-generated investment insight report from the DLX SmartFolio studio.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the SmartFolioReport entity."
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to the UserProfile who generated this report. (Relationship: UserProfile 1:N SmartFolioReport)"
+        },
+        "studioId": {
+          "type": "string",
+          "description": "Reference to the AIStudio, specifically the DLX SmartFolio. (Relationship: AIStudio 1:N SmartFolioReport)"
+        },
+        "inputDataSummary": {
+          "type": "string",
+          "description": "A summary or representation of the financial data provided by the user for this report."
+        },
+        "reportContent": {
+          "type": "string",
+          "description": "The AI-generated portfolio insights, risk analysis, or investment strategy suggestions, potentially as a JSON string."
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp indicating when the SmartFolio report was generated.",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "Timestamp indicating when the SmartFolio report was last updated.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "userId",
+        "studioId",
+        "inputDataSummary",
+        "reportContent",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "AIAgentPersona": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "AIAgentPersona",
+      "type": "object",
+      "description": "Defines an AI agent's personality, role, and capabilities for interactive chat experiences.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the AIAgentPersona entity."
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the AI agent persona (e.g., 'Lux', 'Architect')."
+        },
+        "description": {
+          "type": "string",
+          "description": "A detailed description of the agent's purpose, background, and expertise."
+        },
+        "role": {
+          "type": "string",
+          "description": "The specific role or function the AI agent is designed to perform (e.g., 'Financial Advisor', 'Software Developer')."
+        },
+        "capabilities": {
+          "type": "string",
+          "description": "A summary of the agent's specific capabilities or the types of tasks it can assist with."
+        },
+        "status": {
+          "type": "string",
+          "description": "The current operational status of the AI agent persona.",
+          "format": "string",
+          "items": {
+            "type": "string"
+          }
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp indicating when the AI agent persona was defined.",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "Timestamp indicating when the AI agent persona was last updated.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "description",
+        "role",
+        "status",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "AIConversation": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "AIConversation",
+      "type": "object",
+      "description": "Represents a single chat session between a user and an AI agent persona.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the AIConversation entity."
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to the UserProfile who participated in this conversation. (Relationship: UserProfile 1:N AIConversation)"
+        },
+        "agentPersonaId": {
+          "type": "string",
+          "description": "Reference to the AIAgentPersona involved in this conversation. (Relationship: AIAgentPersona 1:N AIConversation)"
+        },
+        "title": {
+          "type": "string",
+          "description": "An automatically generated or user-provided title summarizing the conversation."
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp indicating when the conversation was initiated.",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "Timestamp indicating when the conversation was last updated or a message was added.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "userId",
+        "agentPersonaId",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "ChatMessage": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "ChatMessage",
+      "type": "object",
+      "description": "Stores individual messages within an AI chat conversation.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the ChatMessage entity."
+        },
+        "conversationId": {
+          "type": "string",
+          "description": "Reference to the AIConversation this message belongs to. (Relationship: AIConversation 1:N ChatMessage)"
+        },
+        "senderType": {
+          "type": "string",
+          "description": "Indicates whether the message was sent by the user or the AI agent.",
+          "format": "string",
+          "items": {
+            "type": "string"
+          }
+        },
+        "content": {
+          "type": "string",
+          "description": "The actual text content of the chat message."
+        },
+        "timestamp": {
+          "type": "string",
+          "description": "Timestamp indicating the exact moment the message was sent.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "conversationId",
+        "senderType",
+        "content",
+        "timestamp"
+      ]
+    },
+    "UserSettings": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "UserSettings",
+      "type": "object",
+      "description": "Contains customizable preferences and settings for a specific user on the platform.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the UserSettings entity."
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to the UserProfile these settings belong to. (Relationship: UserProfile 1:1 UserSettings)"
+        },
+        "themePreference": {
+          "type": "string",
+          "description": "User's chosen UI theme (e.g., 'dark', 'light', 'system')."
+        },
+        "notificationSettings": {
+          "type": "string",
+          "description": "A JSON string or similar structure storing detailed notification preferences (e.g., enable/disable email updates, in-app alerts)."
+        },
+        "securityPreferences": {
+          "type": "string",
+          "description": "A JSON string or similar structure storing non-sensitive, security-related preferences (e.g., multi-factor authentication preferences, but not actual secrets)."
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp indicating when the user settings were initially created.",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "Timestamp indicating when the user settings were last updated.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "userId",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "NewsArticle": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "NewsArticle",
+      "type": "object",
+      "description": "Represents an article or announcement displayed in the platform's news feed.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the NewsArticle entity."
+        },
+        "title": {
+          "type": "string",
+          "description": "The headline or title of the news article."
+        },
+        "content": {
+          "type": "string",
+          "description": "The full body content of the news article, potentially supporting rich text or markdown."
+        },
+        "publishDate": {
+          "type": "string",
+          "description": "The date and time when the news article was published and made visible.",
+          "format": "date-time"
+        },
+        "author": {
+          "type": "string",
+          "description": "The name or identifier of the author who wrote or published the article."
+        },
+        "category": {
+          "type": "string",
+          "description": "The category the news article belongs to (e.g., 'Platform Update', 'AI Research', 'Event')."
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp indicating when the news article entry was initially created in the system.",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "Timestamp indicating when the news article entry was last updated.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "title",
+        "content",
+        "publishDate",
+        "author",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "LabProject": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "LabProject",
+      "type": "object",
+      "description": "Manages experimental AI projects and features within the Labs Hub, including their status and assignments.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the LabProject entity."
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the experimental AI project."
+        },
+        "description": {
+          "type": "string",
+          "description": "A detailed description of the project's objectives, scope, and expected outcomes."
+        },
+        "status": {
+          "type": "string",
+          "description": "The current development status of the experimental project.",
+          "format": "string",
+          "items": {
+            "type": "string"
+          }
+        },
+        "startDate": {
+          "type": "string",
+          "description": "The planned or actual start date of the project.",
+          "format": "date"
+        },
+        "endDate": {
+          "type": "string",
+          "description": "The planned or actual end date of the project (optional).",
+          "format": "date"
+        },
+        "assignedAgentPersonaIds": {
+          "type": "array",
+          "description": "An array of references to AIAgentPersona entities assigned to work on or be part of this project. (Relationship: LabProject N:N AIAgentPersona)",
+          "items": {
+            "type": "string"
+          }
+        },
+        "progressNotes": {
+          "type": "string",
+          "description": "A field for ongoing notes, updates, and milestones related to the project's progress."
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp indicating when the lab project entry was initially created.",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "Timestamp indicating when the lab project entry was last updated.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "description",
+        "status",
+        "startDate",
+        "createdAt",
+        "updatedAt"
+      ]
+    }
+  },
+  "auth": {
+    "providers": [
+      "password",
+      "anonymous"
+    ]
+  },
+  "firestore": {
+    "structure": [
+      {
+        "path": "/users/{userId}",
+        "definition": {
+          "entityName": "UserProfile",
+          "schema": {
+            "$ref": "#/backend/entities/UserProfile"
+          },
+          "description": "Stores basic user profile information. The 'userId' in the path corresponds to the authenticated user's ID (request.auth.uid)."
+        }
+      },
+      {
+        "path": "/users/{userId}/settings",
+        "definition": {
+          "entityName": "UserSettings",
+          "schema": {
+            "$ref": "#/backend/entities/UserSettings"
+          },
+          "description": "Stores user-specific preferences and settings. The 'userId' in the path corresponds to the authenticated user's ID (request.auth.uid).",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier of the user (Firebase Authentication UID)."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/ai_studios/{studioId}",
+        "definition": {
+          "entityName": "AIStudio",
+          "schema": {
+            "$ref": "#/backend/entities/AIStudio"
+          },
+          "description": "Defines available AI studios or tools. These documents are publicly readable.",
+          "params": [
+            {
+              "name": "studioId",
+              "description": "The unique identifier for the AI studio."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/smart_folio_reports/{reportId}",
+        "definition": {
+          "entityName": "SmartFolioReport",
+          "schema": {
+            "$ref": "#/backend/entities/SmartFolioReport"
+          },
+          "description": "Stores AI-generated investment reports for a specific user. Includes denormalized 'userId' matching the path for authorization independence.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier of the user who generated the report (Firebase Authentication UID)."
+            },
+            {
+              "name": "reportId",
+              "description": "The unique identifier for the SmartFolio report."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/ai_agent_personas/{agentPersonaId}",
+        "definition": {
+          "entityName": "AIAgentPersona",
+          "schema": {
+            "$ref": "#/backend/entities/AIAgentPersona"
+          },
+          "description": "Defines AI agent personas for chat interactions. These documents are publicly readable.",
+          "params": [
+            {
+              "name": "agentPersonaId",
+              "description": "The unique identifier for the AI agent persona."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/ai_conversations/{conversationId}",
+        "definition": {
+          "entityName": "AIConversation",
+          "schema": {
+            "$ref": "#/backend/entities/AIConversation"
+          },
+          "description": "Represents individual chat sessions between a user and an AI agent. Includes denormalized 'userId' matching the path for authorization independence.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier of the user who owns the conversation (Firebase Authentication UID)."
+            },
+            {
+              "name": "conversationId",
+              "description": "The unique identifier for the AI conversation."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/ai_conversations/{conversationId}/messages/{messageId}",
+        "definition": {
+          "entityName": "ChatMessage",
+          "schema": {
+            "$ref": "#/backend/entities/ChatMessage"
+          },
+          "description": "Stores individual messages within a user's AI chat conversation. Includes denormalized 'userId' from the parent conversation for authorization independence.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier of the user who owns the conversation (Firebase Authentication UID)."
+            },
+            {
+              "name": "conversationId",
+              "description": "The unique identifier of the parent AI conversation."
+            },
+            {
+              "name": "messageId",
+              "description": "The unique identifier for the chat message."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/news_articles/{articleId}",
+        "definition": {
+          "entityName": "NewsArticle",
+          "schema": {
+            "$ref": "#/backend/entities/NewsArticle"
+          },
+          "description": "Represents articles and announcements for the platform's news feed. These documents are publicly readable.",
+          "params": [
+            {
+              "name": "articleId",
+              "description": "The unique identifier for the news article."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/lab_projects/{projectId}",
+        "definition": {
+          "entityName": "LabProject",
+          "schema": {
+            "$ref": "#/backend/entities/LabProject"
+          },
+          "description": "Manages experimental AI projects and features within the Labs Hub. These documents are publicly readable for status and roadmap information.",
+          "params": [
+            {
+              "name": "projectId",
+              "description": "The unique identifier for the lab project."
+            }
+          ]
+        }
+      }
+    ],
+    "reasoning": "The recommended Firestore structure prioritizes secure, scalable, and debuggable authorization by strictly adhering to the core design principles and strategy mandates. \n\n**Authorization Independence (CRITICAL):** This structure achieves Authorization Independence primarily through two mechanisms:\n1.  **Path-Based Ownership:** For all user-specific data (e.g., `UserProfile`, `UserSettings`, `SmartFolioReport`, `AIConversation`, `ChatMessage`), documents are nested directly under a user's unique ID (`/users/{userId}/...`). This inherently ties ownership to the document path, allowing security rules to directly compare `request.auth.uid` with the `{userId}` wildcard in the path. This eliminates the need for `get()` calls to a parent document to determine ownership.\n2.  **Denormalization for Nested Data:** For nested subcollections where parent data might influence child access (e.g., `ChatMessage` under `AIConversation`), the `userId` (owner) is explicitly denormalized into *each* `ChatMessage` document. This means a security rule for `/users/{userId}/ai_conversations/{conversationId}/messages/{messageId}` can directly check `request.auth.uid == resource.data.userId` without performing a `get()` on the parent `ai_conversations/{conversationId}` document. This ensures atomic authorization checks for all document operations, including nested ones.\n\n**QAPs (Rules are not Filters):** The structure facilitates secure `list` operations by implementing:\n1.  **Structural Segregation (Homogeneous Security Posture):** Publicly readable collections (`ai_studios`, `ai_agent_personas`, `news_articles`, `lab_projects`) are kept at the root level. All documents within these collections share the same public read access policy, making `list` operations inherently secure without needing client-side filtering or complex server-side rule logic to filter results. \n2.  **Path-Based Scope for User Data:** For private user data, the `list` operations are implicitly scoped by the user's ID in the path (e.g., `/users/{userId}/smart_folio_reports`). A user can only `list` reports under their specific `userId` path, and the rules enforce that `request.auth.uid` must match that `{userId}`. This prevents users from performing a broad `list` across all `smart_folio_reports` and attempting to filter for their own, thus upholding the QAP principle that rules should prevent unauthorized access, not filter results for the client. Any attempt to `list` a collection that is not owned by the requesting user will be denied by the rules at the collection level."
+  }
+}
