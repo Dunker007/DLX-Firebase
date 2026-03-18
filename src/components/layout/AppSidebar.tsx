@@ -11,9 +11,11 @@ import {
   Newspaper,
   FlaskConical,
   Settings,
-  ChevronRight,
   Sparkles,
   PieChart,
+  Music,
+  Video,
+  LayoutGrid
 } from "lucide-react"
 
 import {
@@ -36,6 +38,11 @@ const items = [
     title: "Dashboard",
     url: "/dashboard",
     icon: LayoutDashboard,
+  },
+  {
+    title: "Studios Hub",
+    url: "/studios",
+    icon: LayoutGrid,
   },
   {
     title: "Chat & Agents",
@@ -91,7 +98,7 @@ export function AppSidebar() {
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton
                     asChild
-                    isActive={pathname === item.url}
+                    isActive={pathname === item.url || (item.url !== '/dashboard' && pathname.startsWith(item.url))}
                     tooltip={item.title}
                     className="h-11 transition-all duration-200"
                   >

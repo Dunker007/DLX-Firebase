@@ -4,10 +4,10 @@ import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Sparkles, PieChart, Music, FileText, Zap, ChevronRight } from 'lucide-react';
+import { Sparkles, PieChart, Music, FileText, Zap, ChevronRight, Video } from 'lucide-react';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 
-const studios = [
+const featuredStudios = [
   {
     id: 'smart-folio',
     title: 'DLX SmartFolio',
@@ -20,33 +20,23 @@ const studios = [
   },
   {
     id: 'music-studio',
-    title: 'SonicGen Labs',
+    title: 'SonicGen Hub',
     description: 'Compose original music and soundscapes with neural generation.',
     icon: Music,
-    status: 'Beta',
+    status: 'Live',
     image: PlaceHolderImages.find(img => img.id === 'studio-music')?.imageUrl,
-    href: '#',
+    href: '/studios/music',
     color: 'hsl(var(--accent))'
   },
   {
-    id: 'content-studio',
-    title: 'CopyArchitect',
-    description: 'Advanced blog and technical content generation toolkit.',
-    icon: FileText,
+    id: 'video-studio',
+    title: 'DLX Video (Veo)',
+    description: 'Generate high-fidelity cinematic videos using Google Veo.',
+    icon: Video,
     status: 'Beta',
-    image: PlaceHolderImages.find(img => img.id === 'studio-blog')?.imageUrl,
-    href: '#',
-    color: 'hsl(280 65% 60%)'
-  },
-  {
-    id: 'vision-studio',
-    title: 'VisionaryAI',
-    description: 'Generative image and branding assets for modern teams.',
-    icon: Zap,
-    status: 'Coming Soon',
-    image: 'https://picsum.photos/seed/vision/600/400',
-    href: '#',
-    color: 'hsl(173 58% 39%)'
+    image: 'https://picsum.photos/seed/video-gen/600/400',
+    href: '/studios/video',
+    color: 'hsl(var(--primary))'
   }
 ];
 
@@ -56,19 +46,20 @@ export default function DashboardPage() {
       <section>
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
           <div>
-            <h2 className="font-headline text-4xl font-black mb-2 tracking-tight">AI Studios</h2>
-            <p className="text-muted-foreground font-medium text-lg">Specialized intelligence tools for every workflow.</p>
+            <h2 className="font-headline text-4xl font-black mb-2 tracking-tight">Active Studios</h2>
+            <p className="text-muted-foreground font-medium text-lg">Specialized intelligence tools for your creative and financial workflows.</p>
           </div>
           <div className="flex gap-2">
-            <Button variant="secondary" className="rounded-full">All Studios</Button>
-            <Button variant="ghost" className="rounded-full">Favorites</Button>
+            <Button variant="secondary" className="rounded-full" asChild>
+              <Link href="/studios">Explore All</Link>
+            </Button>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8">
-          {studios.map((studio) => (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {featuredStudios.map((studio) => (
             <Card key={studio.id} className="group overflow-hidden border-white/5 bg-card/40 hover:bg-card/60 transition-all duration-300 relative">
-              <div className="aspect-[2/1] relative overflow-hidden">
+              <div className="aspect-video relative overflow-hidden">
                 <Image 
                   src={studio.image || ''} 
                   alt={studio.title}
@@ -100,7 +91,7 @@ export default function DashboardPage() {
                   asChild 
                   variant={studio.status === 'Coming Soon' ? 'ghost' : 'default'} 
                   disabled={studio.status === 'Coming Soon'}
-                  className="w-full group/btn"
+                  className="w-full group/btn rounded-xl"
                 >
                   <Link href={studio.href} className="flex items-center justify-center gap-2">
                     {studio.status === 'Coming Soon' ? 'Waitlist' : 'Enter Studio'}
@@ -121,9 +112,14 @@ export default function DashboardPage() {
             <p className="text-muted-foreground text-lg font-medium leading-relaxed">
               Don't work alone. Chat with our persona-driven AI agents specialized in architecture, development, and luxury hospitality.
             </p>
-            <Button size="lg" asChild className="rounded-full bg-accent hover:bg-accent/90 accent-glow">
-              <Link href="/chat">Open Agent Chat</Link>
-            </Button>
+            <div className="flex gap-4">
+              <Button size="lg" asChild className="rounded-full bg-accent hover:bg-accent/90 accent-glow">
+                <Link href="/chat">Open Agent Chat</Link>
+              </Button>
+              <Button size="lg" variant="outline" asChild className="rounded-full border-white/10">
+                <Link href="/agents">Manage Personas</Link>
+              </Button>
+            </div>
           </div>
           <div className="flex -space-x-4">
             {[1, 2, 3].map((i) => (
