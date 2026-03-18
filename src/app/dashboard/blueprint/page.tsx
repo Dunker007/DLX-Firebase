@@ -3,12 +3,8 @@
 import * as React from "react"
 import { 
   Network, 
-  GitMerge, 
   CheckCircle2, 
   Circle, 
-  Clock, 
-  Sparkles,
-  Bot,
   Zap
 } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -18,19 +14,19 @@ const phases = [
   {
     id: "phase-1",
     title: "Phase 1: Foundation & Identity",
-    status: "in-progress",
+    status: "done",
     description: "Establish the secure base and core personas of the Neural OS.",
     tasks: [
       { name: "Define core DLX Roster (Lux, QPL, Newsician, Mic, Schwab)", status: "done" },
       { name: "Configure App Hosting & Cloud Run environment", status: "done" },
       { name: "Implement Firebase Authentication (User Sessions)", status: "done" },
-      { name: "Set up Firestore schema (Users, Chats, Drive, Pipeline)", status: "pending" },
+      { name: "Set up Firestore schema (Users, Chats, Drive, Pipeline)", status: "done" },
     ]
   },
   {
     id: "phase-2",
     title: "Phase 2: The DLX Chat & Communication Layer",
-    status: "in-progress",
+    status: "done",
     description: "Bring the agents online via Genkit and connect the chat interface.",
     tasks: [
       { name: "Inject detailed system prompts into Genkit flows", status: "done" },
@@ -42,13 +38,13 @@ const phases = [
   {
     id: "phase-3",
     title: "Phase 3: Studio Synthesis & Automation",
-    status: "pending",
+    status: "in-progress",
     description: "Connect the UI shells to real generative APIs for content creation.",
     tasks: [
-      { name: "Music Studio: Connect to audio generation API (e.g., Suno/custom)", status: "pending" },
-      { name: "Video Studio: Implement basic CapCut/Google Vids integration steps", status: "pending" },
+      { name: "Music Studio: Wire Newsician/QPL output to Genkit Audio flow", status: "pending" },
+      { name: "Video Studio: Implement basic visual prompt generation via Mic", status: "pending" },
       { name: "Neural Drive: Wire UI to Firebase Cloud Storage", status: "pending" },
-      { name: "Establish Mic's automated 'Release Pipeline' trigger", status: "pending" },
+      { name: "Pipeline: Build automated multi-agent sequence trigger", status: "pending" },
     ]
   },
   {
@@ -108,7 +104,7 @@ export default function BlueprintPage() {
                   <li key={i} className="flex items-start gap-3 group">
                     {task.status === 'done' ? (
                       <CheckCircle2 className="w-4 h-4 text-emerald-500 mt-0.5 shrink-0" />
-                    ) : phase.status === 'in-progress' && i === 2 ? (
+                    ) : phase.status === 'in-progress' && i === 0 ? (
                       <Zap className="w-4 h-4 text-primary mt-0.5 shrink-0 animate-pulse" />
                     ) : (
                       <Circle className="w-4 h-4 text-muted-foreground/30 mt-0.5 shrink-0 group-hover:text-white/50 transition-colors" />
