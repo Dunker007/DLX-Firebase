@@ -3,21 +3,17 @@
 
 import * as React from "react"
 import { useSearchParams } from "next/navigation"
-import { Send, User, Bot, Sparkles, ChevronLeft, Info } from "lucide-react"
-import { chatWithAIAgentPersona, type ChatAIPersonaInput } from "@/ai/flows/chat-ai-persona"
+import { Send, Bot, Sparkles, Info, Loader2 } from "lucide-react"
+import { chatWithAIAgentPersona } from "@/ai/flows/chat-ai-persona"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Badge } from "@/components/ui/badge"
-
-type Message = {
-  id: string
-  role: "user" | "assistant"
-  content: string
-  persona?: string
-}
+import { useFirestore, useUser, useCollection, useMemoFirebase } from "@/firebase"
+import { collection, query, orderBy, serverTimestamp, addDoc, limit } from "firebase/firestore"
+import { addDocumentNonBlocking } from "@/firebase/non-blocking-updates"
 
 const personas = [
   { name: "Lux", role: "Hospitality & Guidance", desc: "Elegant and helpful assistant for platform queries.", icon: Sparkles, color: "text-primary" },
@@ -27,46 +23,46 @@ const personas = [
 
 export default function ChatPage() {
   const searchParams = useSearchParams()
+  const { user } = useUser()
+  const db = useFirestore()
+  
   const initialPersona = searchParams.get("persona") as typeof personas[number]["name"] | null
   
   const [selectedPersona, setSelectedPersona] = React.useState<typeof personas[number]["name"]>(
     initialPersona && personas.some(p => p.name === initialPersona) ? initialPersona : "Lux"
   )
   const [input, setInput] = React.useState("")
-  const [messages, setMessages] = React.useState<Message[]>([
-    { 
-      id: "1", 
-      role: "assistant", 
-      content: initialPersona === "Architect" 
-        ? "Systems check complete. I am Architect. How can I help you structure your ideas today?" 
-        : initialPersona === "Dev"
-        ? "Dev here. Ready to debug or build. What's the mission?"
-        : "Greetings. I am Lux. How can I assist you in the LuxAI environment today?", 
-      persona: initialPersona && personas.some(p => p.name === initialPersona) ? initialPersona : "Lux" 
-    }
-  ])
   const [isLoading, setIsLoading] = React.useState(false)
   const scrollAreaRef = React.useRef<HTMLDivElement>(null)
 
-  // Update initial message if selected persona changes via click
-  React.useEffect(() => {
-    if (messages.length === 1 && messages[0].role === "assistant") {
-      const content = selectedPersona === "Architect" 
-        ? "Systems check complete. I am Architect. How can I help you structure your ideas today?" 
-        : selectedPersona === "Dev"
-        ? "Dev here. Ready to debug or build. What's the mission?"
-        : "Greetings. I am Lux. How can I assist you in the LuxAI environment today?"
-      
-      setMessages([{ id: "1", role: "assistant", content, persona: selectedPersona }])
-    }
-  }, [selectedPersona])
+  // Memoized conversation query
+  const messagesQuery = useMemoFirebase(() => {
+    if (!db || !user) return null;
+    // For this prototype, we'll use a single "global" conversation per persona for the user
+    return query(
+      collection(db, 'users', user.uid, 'ai_conversations', selectedPersona, 'messages'),
+      orderBy('timestamp', 'asc'),
+      limit(50)
+    );
+  }, [db, user, selectedPersona]);
+
+  const { data: messages, isLoading: isMessagesLoading } = useCollection(messagesQuery);
 
   const handleSend = async (e?: React.FormEvent) => {
     e?.preventDefault()
-    if (!input.trim() || isLoading) return
+    if (!input.trim() || isLoading || !user || !db) return
 
-    const userMessage: Message = { id: Date.now().toString(), role: "user", content: input }
-    setMessages((prev) => [...prev, userMessage])
+    const userMessage = {
+      content: input,
+      senderType: 'user',
+      timestamp: serverTimestamp(),
+      conversationId: selectedPersona
+    }
+
+    // Add to Firestore (non-blocking for better UX)
+    const messagesRef = collection(db, 'users', user.uid, 'ai_conversations', selectedPersona, 'messages');
+    addDocumentNonBlocking(messagesRef, userMessage);
+    
     setInput("")
     setIsLoading(true)
 
@@ -76,19 +72,30 @@ export default function ChatPage() {
         personaName: selectedPersona,
       })
 
-      const assistantMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        role: "assistant",
+      const assistantMessage = {
         content: result.response,
-        persona: selectedPersona,
+        senderType: 'ai',
+        timestamp: serverTimestamp(),
+        conversationId: selectedPersona
       }
-      setMessages((prev) => [...prev, assistantMessage])
+
+      addDocumentNonBlocking(messagesRef, assistantMessage);
     } catch (error) {
       console.error("Chat error:", error)
     } finally {
       setIsLoading(false)
     }
   }
+
+  // Auto-scroll to bottom
+  React.useEffect(() => {
+    if (scrollAreaRef.current) {
+      const scrollContainer = scrollAreaRef.current.querySelector('[data-radix-scroll-area-viewport]');
+      if (scrollContainer) {
+        scrollContainer.scrollTop = scrollContainer.scrollHeight;
+      }
+    }
+  }, [messages]);
 
   return (
     <div className="flex h-[calc(100vh-140px)] gap-6 max-w-7xl mx-auto">
@@ -142,24 +149,30 @@ export default function ChatPage() {
 
         <ScrollArea className="flex-1 p-6" ref={scrollAreaRef}>
           <div className="space-y-6">
-            {messages.map((m) => (
-              <div key={m.id} className={`flex gap-4 ${m.role === "user" ? "flex-row-reverse" : ""}`}>
-                <Avatar className={`w-10 h-10 border ${m.role === "user" ? "border-accent/20" : "border-primary/20"}`}>
-                  <AvatarImage src={m.role === "user" ? "https://picsum.photos/seed/user/100/100" : `https://picsum.photos/seed/${m.persona}/100/100`} />
-                  <AvatarFallback className={m.role === "user" ? "bg-accent/10 text-accent" : "bg-primary/10 text-primary"}>
-                    {m.role === "user" ? "JD" : m.persona?.[0]}
+            {!user && (
+              <div className="text-center p-12 space-y-4">
+                <p className="text-sm text-muted-foreground">You must be logged in to chat with agents.</p>
+                <Button variant="outline" className="h-9 font-black uppercase tracking-widest text-[10px]">Sign In</Button>
+              </div>
+            )}
+            {user && messages?.map((m) => (
+              <div key={m.id} className={`flex gap-4 ${m.senderType === "user" ? "flex-row-reverse" : ""}`}>
+                <Avatar className={`w-10 h-10 border ${m.senderType === "user" ? "border-accent/20" : "border-primary/20"}`}>
+                  <AvatarImage src={m.senderType === "user" ? user.photoURL || `https://picsum.photos/seed/${user.uid}/100/100` : `https://picsum.photos/seed/${selectedPersona}/100/100`} />
+                  <AvatarFallback className={m.senderType === "user" ? "bg-accent/10 text-accent" : "bg-primary/10 text-primary"}>
+                    {m.senderType === "user" ? (user.displayName?.[0] || 'U') : selectedPersona?.[0]}
                   </AvatarFallback>
                 </Avatar>
-                <div className={`flex flex-col max-w-[80%] ${m.role === "user" ? "items-end" : ""}`}>
+                <div className={`flex flex-col max-w-[80%] ${m.senderType === "user" ? "items-end" : ""}`}>
                   <div className={`p-4 rounded-2xl font-medium text-sm leading-relaxed shadow-sm ${
-                    m.role === "user" 
+                    m.senderType === "user" 
                       ? "bg-accent text-white rounded-tr-none" 
                       : "bg-white/5 border border-white/5 rounded-tl-none"
                   }`}>
                     {m.content}
                   </div>
                   <span className="text-[10px] text-muted-foreground mt-2 uppercase font-bold tracking-widest">
-                    {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    {m.timestamp?.toDate ? m.timestamp.toDate().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Sending...'}
                   </span>
                 </div>
               </div>
@@ -176,6 +189,11 @@ export default function ChatPage() {
                 </div>
               </div>
             )}
+            {user && messages?.length === 0 && !isLoading && !isMessagesLoading && (
+              <div className="text-center p-12 text-muted-foreground/30 text-xs font-black uppercase tracking-widest">
+                No conversation history. Start chatting to begin.
+              </div>
+            )}
           </div>
         </ScrollArea>
 
@@ -185,13 +203,14 @@ export default function ChatPage() {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder={`Message ${selectedPersona}...`}
+              disabled={!user || isLoading}
               className="h-14 rounded-2xl bg-background border-white/10 pr-16 focus-visible:ring-primary/50 transition-all font-medium"
             />
             <Button 
               type="submit" 
               size="icon" 
               className="absolute right-2 top-2 h-10 w-10 rounded-xl bg-primary hover:bg-primary/90 neon-glow"
-              disabled={!input.trim() || isLoading}
+              disabled={!input.trim() || isLoading || !user}
             >
               <Send className="w-5 h-5" />
             </Button>
