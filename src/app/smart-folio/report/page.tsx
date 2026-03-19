@@ -5,19 +5,11 @@ import * as React from "react"
 import { FileText, Download, Calendar, ArrowRight, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
-import { useCollection, useFirestore, useUser, useMemoFirebase } from "@/firebase"
-import { collection, query, orderBy } from "firebase/firestore"
+import { useNexus } from '@/hooks/use-nexus';
 
 export default function PortfolioReportPage() {
-  const { user } = useUser()
-  const db = useFirestore()
-  
-  const reportsQuery = useMemoFirebase(() => {
-    if (!db || !user) return null;
-    return query(collection(db, 'users', user.uid, 'smart_folio_reports'), orderBy('createdAt', 'desc'));
-  }, [db, user]);
-
-  const { data: reports, isLoading } = useCollection(reportsQuery);
+  const user = { uid: "test1" };
+  const { data: reports, isLoading } = useNexus<any[]>('/portfolio/reports');
 
   return (
     <div className="p-8 space-y-8 max-w-5xl mx-auto">

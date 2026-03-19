@@ -35,7 +35,6 @@ import {
 } from "@/components/ui/sidebar"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
-import { useUser } from "@/firebase"
 
 const items = [
   { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
@@ -54,7 +53,7 @@ const items = [
 export function AppSidebar() {
   const pathname = usePathname()
   const { state } = useSidebar()
-  const { user } = useUser()
+  const user = { uid: "test_local", displayName: "Chris", email: "chris@dlx.com", photoURL: "" }
 
   return (
     <Sidebar collapsible="icon" className="border-r border-white/5 bg-[#08080a]">
@@ -82,7 +81,7 @@ export function AppSidebar() {
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton
                     asChild
-                    isActive={pathname === item.url || (item.url !== '/dashboard' && pathname.startsWith(item.url))}
+                    isActive={pathname === item.url || (item.url !== '/dashboard' && pathname?.startsWith(item.url))}
                     tooltip={item.title}
                     className="h-10 transition-all duration-200 hover:bg-white/5 data-[active=true]:bg-primary/10 data-[active=true]:text-primary"
                   >

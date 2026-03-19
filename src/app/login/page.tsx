@@ -6,63 +6,28 @@ import { Sparkles, Bot, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
-import { useAuth, useUser } from '@/firebase';
-import { initiateAnonymousSignIn, initiateEmailSignIn, initiateGoogleSignIn } from '@/firebase/non-blocking-login';
+// Removed Firebase
 
 export default function LoginPage() {
   const router = useRouter();
-  const auth = useAuth();
-  const { user, isUserLoading } = useUser();
+  const user: any = null;
+  const isUserLoading = false;
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
   const [isSigningIn, setIsSigningIn] = React.useState(false);
   const [errorMsg, setErrorMsg] = React.useState<string | null>(null);
 
-  React.useEffect(() => {
-    if (user && !isUserLoading) {
-      router.push('/dashboard');
-    }
-  }, [user, isUserLoading, router]);
-
   const handleEmailLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email || !password || !auth) return;
-    setIsSigningIn(true);
-    setErrorMsg(null);
-    try {
-      await initiateEmailSignIn(auth, email, password);
-    } catch (err: any) {
-      setErrorMsg(err.message || 'Login failed.');
-      setIsSigningIn(false);
-    }
+    router.push('/dashboard');
   };
 
   const handleAnonymousLogin = async () => {
-    if(!auth) return;
-    setIsSigningIn(true);
-    setErrorMsg(null);
-    try {
-      await initiateAnonymousSignIn(auth);
-    } catch (err: any) {
-      setErrorMsg(err.message || 'Anonymous login failed.');
-      setIsSigningIn(false);
-    }
+    router.push('/dashboard');
   };
   
   const handleGoogleLogin = async () => {
-    if(!auth) return;
-    setIsSigningIn(true);
-    setErrorMsg(null);
-    try {
-      await initiateGoogleSignIn(auth);
-    } catch (err: any) {
-      // We specifically ignore the "popup-closed-by-user" error because 
-      // the user might just have changed their mind, but we need to reset the loading state.
-      if (err.code !== 'auth/popup-closed-by-user' && err.code !== 'auth/cancelled-popup-request') {
-        setErrorMsg(err.message || 'Google login failed.');
-      }
-      setIsSigningIn(false);
-    }
+    router.push('/dashboard');
   }
 
   return (

@@ -10,8 +10,8 @@ import { Card } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Badge } from "@/components/ui/badge"
-import { useFirestore, useUser, useCollection, useMemoFirebase } from "@/firebase"
-import { collection, query, orderBy, serverTimestamp, limit, addDoc } from "firebase/firestore"
+// Removed Firebase
+import { useNexus, mutateNexus } from '@/hooks/use-nexus'
 import Link from "next/link"
 import ReactMarkdown from 'react-markdown'
 
@@ -29,8 +29,9 @@ export type PersonaName = typeof personas[number]["name"];
 function ChatContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
-  const { user, isUserLoading } = useUser()
-  const db = useFirestore()
+  const user = { uid: "test1", displayName: "Chris", photoURL: "" };
+  const isUserLoading = false;
+  const db = null;
   
   const [hasMounted, setHasMounted] = React.useState(false)
   const [selectedPersona, setSelectedPersona] = React.useState<PersonaName>("Lux")
@@ -46,7 +47,7 @@ function ChatContent() {
   // Sync selected persona from URL
   React.useEffect(() => {
     if (hasMounted) {
-      const personaParam = searchParams.get("persona") as PersonaName | null
+      const personaParam = searchParams?.get("persona") as PersonaName | null
       if (personaParam && personas.some(p => p.name === personaParam)) {
         setSelectedPersona(personaParam)
       }
@@ -59,16 +60,8 @@ function ChatContent() {
     router.push("/chat?persona=" + name, { scroll: false })
   }
 
-  const messagesQuery = useMemoFirebase(() => {
-    if (!db || !user || !hasMounted) return null;
-    return query(
-      collection(db, 'users', user.uid, 'ai_conversations', selectedPersona, 'messages'),
-      orderBy('timestamp', 'asc'),
-      limit(100)
-    );
-  }, [db, user, selectedPersona, hasMounted]);
-
-  const { data: messages, isLoading: isMessagesLoading } = useCollection(messagesQuery);
+  const { data: messagesData, isLoading: isMessagesLoading, mutate } = useNexus<any[]>('/chat?agentId=' + selectedPersona);
+  const messages = messagesData || [];
 
   const handleSend = async (e?: React.FormEvent) => {
     e?.preventDefault()
@@ -78,15 +71,13 @@ function ChatContent() {
     setInput("")
     setIsLoading(true)
 
-    const messagesRef = collection(db, 'users', user.uid, 'ai_conversations', selectedPersona, 'messages');
-
     try {
-      // 1. Save user message immediately
-      await addDoc(messagesRef, {
-        content: currentInput,
-        senderType: 'user',
-        timestamp: serverTimestamp(),
+      // 1. Save user message to Nexus
+      await mutateNexus('/chat', {
+        method: 'POST',
+        body: JSON.stringify({ role: 'user', content: currentInput, agent_id: selectedPersona })
       });
+      mutate();
 
       // 2. Call Genkit Flow
       const result = await chatWithAIAgentPersona({
@@ -94,12 +85,12 @@ function ChatContent() {
         personaName: selectedPersona,
       })
 
-      // 3. Save AI response
-      await addDoc(messagesRef, {
-        content: result.response,
-        senderType: 'ai',
-        timestamp: serverTimestamp(),
+      // 3. Save AI response to Nexus
+      await mutateNexus('/chat', {
+        method: 'POST',
+        body: JSON.stringify({ role: 'assistant', content: result.response, agent_id: selectedPersona })
       });
+      mutate();
 
     } catch (error) {
       console.error("Chat failed:", error);
@@ -210,33 +201,35 @@ function ChatContent() {
               </div>
             )}
 
-            {user && messages?.map((m: any) => (
-              <div key={m.id} className={"flex gap-4 " + (m.senderType === "user" ? "flex-row-reverse" : "")}>
-                <Avatar className={"w-10 h-10 border shrink-0 mt-1 " + (m.senderType === "user" ? "border-white/10" : activePersonaDetails.border)}>
-                  {m.senderType === "user" ? (
+            {user && messages?.map((m: any) => {
+              const isUser = m.senderType === "user" || m.role === "user";
+              return (
+              <div key={m.id} className={"flex gap-4 " + (isUser ? "flex-row-reverse" : "")}>
+                <Avatar className={"w-10 h-10 border shrink-0 mt-1 " + (isUser ? "border-white/10" : activePersonaDetails.border)}>
+                  {isUser ? (
                     <AvatarImage src={user.photoURL || undefined} />
                   ) : (
                     <div className={"w-full h-full flex items-center justify-center " + activePersonaDetails.bg}>
                        <activePersonaDetails.icon className={"w-5 h-5 " + activePersonaDetails.color} />
                     </div>
                   )}
-                  <AvatarFallback className={m.senderType === "user" ? "bg-white/5 text-white" : activePersonaDetails.bg}>
-                    {m.senderType === "user" ? (user.displayName?.[0] || 'U') : selectedPersona?.[0]}
+                  <AvatarFallback className={isUser ? "bg-white/5 text-white" : activePersonaDetails.bg}>
+                    {isUser ? (user.displayName?.[0] || 'U') : selectedPersona?.[0]}
                   </AvatarFallback>
                 </Avatar>
                 
-                <div className={"flex flex-col max-w-[85%] " + (m.senderType === "user" ? "items-end" : "items-start")}>
+                <div className={"flex flex-col max-w-[85%] " + (isUser ? "items-end" : "items-start")}>
                   <div className="mb-1 px-1">
                     <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">
-                      {m.senderType === "user" ? "You" : selectedPersona}
+                      {isUser ? "You" : selectedPersona}
                     </span>
                   </div>
                   <div className={"p-5 rounded-3xl text-sm leading-relaxed " + (
-                    m.senderType === "user" 
+                    isUser 
                       ? "bg-white/10 text-white rounded-tr-none border border-white/10" 
                       : "bg-[#111115] border border-white/5 rounded-tl-none shadow-xl prose prose-invert prose-p:leading-relaxed prose-pre:bg-black/50 prose-pre:border prose-pre:border-white/10 max-w-none"
                   )}>
-                    {m.senderType === "user" ? (
+                    {isUser ? (
                       m.content
                     ) : (
                       <ReactMarkdown>{m.content}</ReactMarkdown>
@@ -244,7 +237,7 @@ function ChatContent() {
                   </div>
                 </div>
               </div>
-            ))}
+            )})}
             
             {isLoading && (
               <div className="flex gap-4">

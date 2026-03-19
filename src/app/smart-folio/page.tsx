@@ -21,9 +21,7 @@ import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { smartFolioInsights, type SmartFolioInsightsOutput } from "@/ai/flows/smart-folio-insights"
-import { useFirestore, useUser } from "@/firebase"
-import { collection, serverTimestamp } from "firebase/firestore"
-import { addDocumentNonBlocking } from "@/firebase/non-blocking-updates"
+// Removed Firebase
 
 const allocationData = [
   { name: 'USD', value: 32.2, color: '#3b82f6' },
@@ -44,8 +42,8 @@ const assetTactics = [
 ]
 
 export default function SmartFolioHub() {
-  const { user } = useUser();
-  const db = useFirestore();
+  const user = { uid: "test1" };
+  const db = null;
   const [isAnalyzing, setIsAnalyzing] = React.useState(false);
   const [aiReport, setAiReport] = React.useState<SmartFolioInsightsOutput | null>(null);
 
@@ -63,15 +61,9 @@ export default function SmartFolioHub() {
       setAiReport(result);
 
       if (user && db) {
-        const reportsRef = collection(db, 'users', user.uid, 'smart_folio_reports');
-        addDocumentNonBlocking(reportsRef, {
-          userId: user.uid,
-          studioId: 'smart-folio',
-          inputDataSummary: 'Full Portfolio Snapshot (Aggressive Growth)',
-          reportContent: JSON.stringify(result),
-          createdAt: serverTimestamp(),
-          updatedAt: serverTimestamp(),
-        });
+        const reportsRef = null;
+        // Mock addDocument
+        console.log("Mock add to smart_folio_reports", result);
       }
     } catch (error) {
       console.error("Analysis failed:", error);

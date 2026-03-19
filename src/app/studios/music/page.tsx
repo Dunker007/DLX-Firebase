@@ -28,8 +28,7 @@ import { Badge } from "@/components/ui/badge"
 import { Textarea } from "@/components/ui/textarea"
 import { generateAudio } from "@/ai/flows/audio-generation-flow"
 import { cn } from "@/lib/utils"
-import { useFirestore, useUser, useCollection } from "@/firebase"
-import { collection, query, orderBy, limit, getDocs } from "firebase/firestore"
+// Removed Firebase
 import {
   Select,
   SelectContent,
@@ -52,34 +51,15 @@ export default function MusicStudioPage() {
   const [audioUrl, setAudioUrl] = React.useState<string | null>(null)
   
   // Suno Generator State
-  const { user } = useUser()
-  const db = useFirestore()
+  const user = { uid: "test1" };
+  const db = null;
   const [recentLyrics, setRecentLyrics] = React.useState<any[]>([])
   const [isCopied, setIsCopied] = React.useState(false)
 
   // Fetch recent lyrics from chat history when in Suno mode
   React.useEffect(() => {
     async function fetchRecentLyrics() {
-      if (!user || !db || selectedMode !== 'suno-generator') return;
-      
-      const qplRef = collection(db, 'users', user.uid, 'ai_conversations', 'QPL', 'messages');
-      const newsicianRef = collection(db, 'users', user.uid, 'ai_conversations', 'Newsician', 'messages');
-      
-      try {
-        const [qplDocs, newsicianDocs] = await Promise.all([
-          getDocs(query(qplRef, orderBy('timestamp', 'desc'), limit(10))),
-          getDocs(query(newsicianRef, orderBy('timestamp', 'desc'), limit(10)))
-        ]);
-
-        const allDocs = [...qplDocs.docs, ...newsicianDocs.docs]
-          .map(doc => ({ id: doc.id, ...doc.data() }))
-          .filter((msg: any) => msg.senderType === 'ai' && msg.content.includes('[Intro]')) // Naive check for lyrics
-          .sort((a: any, b: any) => b.timestamp - a.timestamp);
-
-        setRecentLyrics(allDocs);
-      } catch(e) {
-        console.error("Error fetching lyrics", e);
-      }
+      setRecentLyrics([]);
     }
     fetchRecentLyrics();
   }, [user, db, selectedMode]);

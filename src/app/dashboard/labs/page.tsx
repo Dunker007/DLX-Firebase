@@ -5,25 +5,12 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { FlaskConical, Plus, Search, Loader2 } from 'lucide-react';
-import { useCollection, useFirestore, useMemoFirebase } from '@/firebase';
-import { collection, query, orderBy } from 'firebase/firestore';
+import { useNexus } from '@/hooks/use-nexus';
 
 const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
 export default function LabsPage() {
-  const db = useFirestore();
-  const [hasMounted, setHasMounted] = React.useState(false);
-
-  React.useEffect(() => {
-    setHasMounted(true);
-  }, []);
-  
-  const labsQuery = useMemoFirebase(() => {
-    if (!db || !hasMounted) return null;
-    return query(collection(db, 'lab_projects'), orderBy('createdAt', 'desc'));
-  }, [db, hasMounted]);
-
-  const { data: labProjects, isLoading } = useCollection(labsQuery);
+  const { data: labProjects, isLoading } = useNexus<any[]>('/projects');
   const [search, setSearch] = React.useState('');
 
   const filteredProjects = React.useMemo(() => {
@@ -34,7 +21,7 @@ export default function LabsPage() {
     );
   }, [labProjects, search]);
 
-  if (!hasMounted) return null;
+  // Removed hasMounted
 
   return (
     <div className="max-w-[1400px] mx-auto py-6 space-y-8">

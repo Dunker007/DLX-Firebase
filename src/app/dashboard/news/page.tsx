@@ -6,25 +6,12 @@ import Image from 'next/image';
 import { Card, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Newspaper, ExternalLink, Loader2 } from 'lucide-react';
-import { useCollection, useFirestore, useMemoFirebase } from '@/firebase';
-import { collection, query, orderBy, limit } from 'firebase/firestore';
+import { useNexus } from '@/hooks/use-nexus';
 
 export default function NewsPage() {
-  const db = useFirestore();
-  const [hasMounted, setHasMounted] = React.useState(false);
+  const { data: newsItems, isLoading } = useNexus<any[]>('/news');
 
-  React.useEffect(() => {
-    setHasMounted(true);
-  }, []);
-  
-  const newsQuery = useMemoFirebase(() => {
-    if (!db || !hasMounted) return null;
-    return query(collection(db, 'news_articles'), orderBy('publishDate', 'desc'), limit(10));
-  }, [db, hasMounted]);
-
-  const { data: newsItems, isLoading } = useCollection(newsQuery);
-
-  if (!hasMounted) return null;
+  // Removed hasMounted
 
   return (
     <div className="max-w-4xl mx-auto py-6">

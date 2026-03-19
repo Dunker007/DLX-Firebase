@@ -4,7 +4,6 @@ import { AppSidebar } from "@/components/layout/AppSidebar"
 import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar"
 import { Moon, Search, AlertCircle, LogOut } from "lucide-react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { useUser, useAuth } from "@/firebase"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 
@@ -13,11 +12,11 @@ export default function DashboardLayout({
 }: {
   children: React.ReactNode
 }) {
-  const { user, isUserLoading } = useUser()
-  const auth = useAuth()
+  const user = { uid: "test_local", displayName: "Chris", email: "chris@dlx.com", photoURL: "" }
+  const isUserLoading = false
 
   const handleSignOut = () => {
-    auth.signOut()
+    // Mock signs out
   }
 
   return (
