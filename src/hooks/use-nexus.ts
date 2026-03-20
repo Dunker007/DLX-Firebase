@@ -25,14 +25,17 @@ export function useNexus<T>(endpoint: string | null) {
       setIsLoading(true);
       setError(null);
       try {
-        const response = await fetch(`${NEXUS_API_BASE}${endpoint}`);
+        const isCloudRoute = endpoint.startsWith('/chat');
+        const fetchUrl = isCloudRoute ? `/api${endpoint}` : `${NEXUS_API_BASE}${endpoint}`;
+
+        const response = await fetch(fetchUrl);
         if (!response.ok) {
-          throw new Error(`Nexus connection failed: ${response.statusText}`);
+          throw new Error(`Connection failed: ${response.statusText}`);
         }
         const json = await response.json();
         setData(json);
       } catch (err) {
-        console.error("Nexus API Error:", err);
+        console.error("API Error:", err);
         setError(err instanceof Error ? err : new Error(String(err)));
       } finally {
         setIsLoading(false);
@@ -50,7 +53,10 @@ export function useNexus<T>(endpoint: string | null) {
  */
 export async function mutateNexus(endpoint: string, options: RequestInit = {}) {
   try {
-    const response = await fetch(`${NEXUS_API_BASE}${endpoint}`, {
+    const isCloudRoute = endpoint.startsWith('/chat');
+    const fetchUrl = isCloudRoute ? `/api${endpoint}` : `${NEXUS_API_BASE}${endpoint}`;
+
+    const response = await fetch(fetchUrl, {
       ...options,
       headers: {
         'Content-Type': 'application/json',
@@ -60,7 +66,7 @@ export async function mutateNexus(endpoint: string, options: RequestInit = {}) {
     if (!response.ok) throw new Error(`Mutation failed: ${response.statusText}`);
     return await response.json();
   } catch (error) {
-    console.error("Nexus Mutation Error:", error);
+    console.error("Mutation Error:", error);
     throw error;
   }
 }
