@@ -77,15 +77,21 @@ export default function MeetingStudioPage() {
                       {p.name.includes("You") && isVideoOff ? (
                         <div className="flex flex-col items-center gap-4">
                            <Avatar className="w-24 h-24 border-2 border-white/10">
-                             <AvatarImage src={p.image} />
+                             <AvatarImage src={`/.netlify/images?url=${encodeURIComponent(p.image)}&w=100&fm=avif&q=80`} />
                              <AvatarFallback>JD</AvatarFallback>
                            </Avatar>
                            <p className="text-[10px] font-black uppercase text-muted-foreground">Camera Off</p>
                         </div>
                       ) : (
                         <img 
-                          src={`https://picsum.photos/seed/meeting-${i}/1280/720`} 
+                          src={`/.netlify/images?url=https://picsum.photos/seed/meeting-${i}/1280/720&w=1280&fm=avif&q=80`}
+                          srcSet={`/.netlify/images?url=https://picsum.photos/seed/meeting-${i}/1280/720&w=400&fm=avif&q=80 400w, /.netlify/images?url=https://picsum.photos/seed/meeting-${i}/1280/720&w=800&fm=avif&q=80 800w, /.netlify/images?url=https://picsum.photos/seed/meeting-${i}/1280/720&w=1200&fm=avif&q=80 1200w`}
+                          sizes="(max-width: 768px) 100vw, 50vw"
                           alt={p.name}
+                          loading={i === 0 ? "eager" : "lazy"}
+                          fetchpriority={i === 0 ? "high" : "auto"}
+                          width={1280}
+                          height={720}
                           className="w-full h-full object-cover opacity-60 group-hover:opacity-80 transition-opacity"
                         />
                       )}

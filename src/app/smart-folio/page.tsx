@@ -267,7 +267,16 @@ export default function SmartFolioHub() {
                   <TableCell className="py-4">
                     <div className="flex items-center gap-4">
                       <div className="w-10 h-10 rounded-xl bg-white/5 border border-white/5 overflow-hidden p-1.5 flex items-center justify-center shrink-0">
-                        <img src={asset.image} alt={asset.name} className="w-full h-full object-contain" />
+                        <img 
+                          src={`/.netlify/images?url=${encodeURIComponent(asset.image)}&w=64&fm=avif&q=80`}
+                          srcSet={`/.netlify/images?url=${encodeURIComponent(asset.image)}&w=32&fm=avif&q=80 32w, /.netlify/images?url=${encodeURIComponent(asset.image)}&w=64&fm=avif&q=80 64w, /.netlify/images?url=${encodeURIComponent(asset.image)}&w=128&fm=avif&q=80 128w`}
+                          sizes="32px"
+                          alt={asset.name}
+                          loading="lazy"
+                          width={32}
+                          height={32}
+                          className="w-full h-full object-contain" 
+                        />
                       </div>
                       <div className="space-y-0.5">
                         <div className="flex items-center gap-2">
