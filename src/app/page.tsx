@@ -10,7 +10,7 @@ export default function Home() {
           <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center neon-glow">
             <Sparkles className="w-6 h-6 text-white" />
           </div>
-          <span className="font-headline font-bold text-2xl tracking-tighter uppercase">DLX AI Studios</span>
+          <span className="font-headline font-bold text-2xl tracking-tighter uppercase">DLX Live Engine</span>
         </div>
         <div className="flex items-center gap-6">
           <Link href="/login" className="text-sm font-medium hover:text-primary transition-colors">Sign In</Link>
@@ -63,7 +63,7 @@ export default function Home() {
           <div className="w-6 h-6 rounded bg-primary/20 flex items-center justify-center">
             <Sparkles className="w-3 h-3 text-primary" />
           </div>
-          <span>&copy; 2024 DLX AI Studios. Neural OS v0.1.0</span>
+          <span>&copy; 2026 DLX Live Engine. Neural OS v0.1.0</span>
         </div>
         <div className="flex items-center gap-8">
           <Link href="#" className="hover:text-primary transition-colors">Neural Terms</Link>
