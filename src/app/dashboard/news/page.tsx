@@ -2,7 +2,6 @@
 "use client"
 
 import * as React from 'react';
-import Image from 'next/image';
 import { Card, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Newspaper, ExternalLink, Loader2 } from 'lucide-react';
@@ -37,11 +36,15 @@ export default function NewsPage() {
           <Card key={item.id} className="group overflow-hidden border-white/5 bg-[#0a0a0c]/40 hover:bg-[#0a0a0c]/60 transition-all cursor-pointer rounded-3xl">
             <div className="flex flex-col md:flex-row">
               <div className="md:w-1/3 relative aspect-video md:aspect-auto overflow-hidden">
-                <Image 
-                  src={`https://picsum.photos/seed/${item.id}/800/400`} 
+                <img 
+                  src={`/.netlify/images?url=https://picsum.photos/seed/${item.id}/800/400&w=800&fm=avif&q=80`}
+                  srcSet={`/.netlify/images?url=https://picsum.photos/seed/${item.id}/800/400&w=400&fm=avif&q=80 400w, /.netlify/images?url=https://picsum.photos/seed/${item.id}/800/400&w=800&fm=avif&q=80 800w, /.netlify/images?url=https://picsum.photos/seed/${item.id}/800/400&w=1200&fm=avif&q=80 1200w`}
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                   alt={item.title}
-                  fill
-                  className="object-cover group-hover:scale-105 transition-transform duration-700"
+                  loading="lazy"
+                  width={800}
+                  height={400}
+                  className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0c] via-transparent to-transparent" />
               </div>

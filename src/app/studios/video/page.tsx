@@ -126,7 +126,17 @@ export default function VideoProductionStudio() {
                       <source src={activeScene.videoUrl} type="video/mp4" />
                     </video>
                   ) : (
-                    <img src={activeScene.thumbnail} className="w-full h-full object-cover opacity-60" alt="Placeholder" />
+                    <img 
+                      src={`/.netlify/images?url=${encodeURIComponent(activeScene.thumbnail)}&w=1200&fm=avif&q=80`} 
+                      srcSet={`/.netlify/images?url=${encodeURIComponent(activeScene.thumbnail)}&w=400&fm=avif&q=80 400w, /.netlify/images?url=${encodeURIComponent(activeScene.thumbnail)}&w=800&fm=avif&q=80 800w, /.netlify/images?url=${encodeURIComponent(activeScene.thumbnail)}&w=1200&fm=avif&q=80 1200w`}
+                      sizes="(max-width: 1200px) 100vw, 1200px"
+                      className="w-full h-full object-cover opacity-60" 
+                      alt="Placeholder" 
+                      loading="eager"
+                      fetchpriority="high"
+                      width={1200}
+                      height={675}
+                    />
                   )}
                   <div className="absolute top-6 left-6 flex items-center gap-3">
                      <Badge className="bg-black/60 border-white/10 text-[9px] font-black tracking-widest uppercase">Scene {activeScene.id}</Badge>
@@ -170,7 +180,16 @@ export default function VideoProductionStudio() {
                            activeSceneId === scene.id ? "border-primary" : "border-white/5"
                          )}
                        >
-                          <img src={scene.thumbnail} alt={scene.title} className="w-full h-20 object-cover opacity-60" />
+                          <img 
+                            src={`/.netlify/images?url=${encodeURIComponent(scene.thumbnail)}&w=400&fm=avif&q=80`} 
+                            srcSet={`/.netlify/images?url=${encodeURIComponent(scene.thumbnail)}&w=200&fm=avif&q=80 200w, /.netlify/images?url=${encodeURIComponent(scene.thumbnail)}&w=400&fm=avif&q=80 400w`}
+                            sizes="200px"
+                            alt={scene.title} 
+                            loading="lazy"
+                            width={300}
+                            height={180}
+                            className="w-full h-20 object-cover opacity-60" 
+                          />
                           <div className="p-2">
                              <span className="text-[9px] font-black uppercase text-white truncate block">{scene.title}</span>
                           </div>

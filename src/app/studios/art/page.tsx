@@ -155,7 +155,17 @@ export default function ArtStudioPage() {
                   <p className="text-[10px] text-orange-500 font-black uppercase tracking-widest">Synthesizing Pixels...</p>
                 </div>
               ) : generatedImage ? (
-                <img src={generatedImage} alt="Generated" className="w-full h-full object-contain" />
+                <img 
+                  src={`/.netlify/images?url=${encodeURIComponent(generatedImage)}&w=1200&fm=avif&q=80`} 
+                  srcSet={`/.netlify/images?url=${encodeURIComponent(generatedImage)}&w=400&fm=avif&q=80 400w, /.netlify/images?url=${encodeURIComponent(generatedImage)}&w=800&fm=avif&q=80 800w, /.netlify/images?url=${encodeURIComponent(generatedImage)}&w=1200&fm=avif&q=80 1200w`}
+                  sizes="(max-width: 1200px) 100vw, 1200px"
+                  alt="Generated" 
+                  loading="eager"
+                  fetchpriority="high"
+                  width={1200}
+                  height={800}
+                  className="w-full h-full object-contain" 
+                />
               ) : (
                 <>
                   <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center mb-6">
@@ -175,7 +185,16 @@ export default function ArtStudioPage() {
               <div className="grid grid-cols-4 gap-4">
                  {history.length > 0 ? history.map((img, i) => (
                    <Card key={i} className="aspect-square bg-white/5 border-white/5 rounded-2xl overflow-hidden group relative cursor-pointer">
-                      <img src={img} alt="Art History" className="w-full h-full object-cover" />
+                      <img 
+                        src={`/.netlify/images?url=${encodeURIComponent(img)}&w=400&fm=avif&q=80`} 
+                        srcSet={`/.netlify/images?url=${encodeURIComponent(img)}&w=200&fm=avif&q=80 200w, /.netlify/images?url=${encodeURIComponent(img)}&w=400&fm=avif&q=80 400w`}
+                        sizes="(max-width: 768px) 50vw, 25vw"
+                        alt="Art History" 
+                        loading="lazy"
+                        width={400}
+                        height={400}
+                        className="w-full h-full object-cover" 
+                      />
                       <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/40 gap-2">
                          <Button size="icon" onClick={() => setGeneratedImage(img)} className="h-8 w-8 bg-orange-600 rounded-lg"><Eye className="w-4 h-4" /></Button>
                          <Button size="icon" className="h-8 w-8 bg-white/10 rounded-lg"><Download className="w-4 h-4" /></Button>
